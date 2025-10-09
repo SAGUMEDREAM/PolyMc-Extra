@@ -6,34 +6,23 @@ import eu.pb4.polymer.core.api.utils.PolymerUtils;
 import eu.pb4.polymer.rsm.api.RegistrySyncUtils;
 import lombok.extern.slf4j.Slf4j;
 import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.component.ComponentType;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.EnchantmentEffectComponentTypes;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.effect.StatusEffect;
-import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.Item;
-import net.minecraft.item.Items;
 import net.minecraft.item.consume.ConsumeEffect;
 import net.minecraft.potion.Potion;
-import net.minecraft.potion.Potions;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.stat.StatFormatter;
 import net.minecraft.stat.StatType;
-import net.minecraft.stat.Stats;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.*;
 
 @Slf4j
@@ -131,7 +120,7 @@ public class RegistriesUtil {
     public static void markNamespace(Registry registry, Object object) {
         Identifier id = registry.getId(object);
         if (id!=null) {
-            PolyMcPacks.NAMESPACES.add(id.getNamespace());
+            PolyMcExtraPacks.NAMESPACES.add(id.getNamespace());
         }
     }
 

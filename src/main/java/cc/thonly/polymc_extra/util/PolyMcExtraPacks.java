@@ -2,7 +2,6 @@ package cc.thonly.polymc_extra.util;
 
 import cc.thonly.polymc_extra.PolyMcExtra;
 import cc.thonly.polymc_extra.config.Config;
-import com.mojang.datafixers.types.Func;
 import eu.pb4.factorytools.api.block.model.generic.BlockStateModelManager;
 import eu.pb4.factorytools.api.resourcepack.ModelModifiers;
 import eu.pb4.polymer.resourcepack.api.AssetPaths;
@@ -14,20 +13,20 @@ import eu.pb4.polymer.resourcepack.extras.api.format.blockstate.StateModelVarian
 import eu.pb4.polymer.resourcepack.extras.api.format.model.ModelAsset;
 import eu.pb4.polymer.resourcepack.extras.api.format.model.ModelElement;
 import lombok.extern.slf4j.Slf4j;
+import net.minecraft.block.AbstractSignBlock;
 import net.minecraft.block.Block;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
-import org.spongepowered.asm.mixin.Unique;
 
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.Function;
 
 @Slf4j
-public class PolyMcPacks {
-    public static final List<Identifier> SIGN_MODELS = new ArrayList<>();
+public class PolyMcExtraPacks {
+    public static final List<AbstractSignBlock> SIGN_MODELS = new ArrayList<>();
     public static final Set<String> EXPANDABLE = new LinkedHashSet<>(Set.of(
             "wall", "fence", "slab", "stairs", "pressure_plate", "button",
             "glass_pane", "lattice", "bars", "carpet", "chain", "lantern"
@@ -78,7 +77,7 @@ public class PolyMcPacks {
             );
         }
         PolymerResourcePackUtils.markAsRequired();
-        PolymerResourcePackUtils.RESOURCE_PACK_AFTER_INITIAL_CREATION_EVENT.register(PolyMcPacks::build);
+        PolymerResourcePackUtils.RESOURCE_PACK_AFTER_INITIAL_CREATION_EVENT.register(PolyMcExtraPacks::build);
     }
 
     private static void build(ResourcePackBuilder builder) {
@@ -147,8 +146,13 @@ public class PolyMcPacks {
             }));
         }
 
-        for (Identifier signModel : SIGN_MODELS) {
-            ModelModifiers.createSignModel(builder, signModel.getNamespace(), signModel.getPath(), atlas);
+        for (AbstractSignBlock signModel : SIGN_MODELS) {
+            Identifier id = Registries.BLOCK.getId(signModel);
+            try {
+                ModelModifiers.createSignModel(builder, id.getNamespace(), signModel.getWoodType().name(), atlas);
+            } catch (Exception err) {
+                log.error("Can't read model namespace and id {}", id, err);
+            }
         }
 
         builder.addData("assets/minecraft/atlases/blocks.json", atlas.build());

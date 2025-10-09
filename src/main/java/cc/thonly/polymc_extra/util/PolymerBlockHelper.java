@@ -70,12 +70,12 @@ public class PolymerBlockHelper {
             BlockWithElementHolder.registerOverlay(block, blockWithElementHolder);
         }
 
-        if (block instanceof AbstractSignBlock) {
-            PolyMcPacks.SIGN_MODELS.add(id);
+        if (block instanceof AbstractSignBlock signBlock) {
+            PolyMcExtraPacks.SIGN_MODELS.add(signBlock);
             PolyMcExtra.LATE_INIT.add(() -> {
-                if (testJsonExist(block)) {
+//                if (testJsonExist(block)) {
                     SignModel.setModel(block, Identifier.of(id.getNamespace(), "block_sign/" + id.getPath()));
-                }
+//                }
             });
         }
     }
@@ -97,6 +97,7 @@ public class PolymerBlockHelper {
         if (polymerBlock == null) {
             polymerBlock = switch (block) {
                 case RedstoneLampBlock ignored -> StatePolymerBlock.of(block, BlockModelType.FULL_BLOCK);
+                case StainedGlassBlock ignored -> BaseFactoryBlock.BARRIER;
                 case StairsBlock ignored -> StateCopyFactoryBlock.STAIR;
                 case SlabBlock ignored -> SlabFactoryBlock.INSTANCE;
                 case FenceGateBlock ignored -> StateCopyFactoryBlock.FENCE_GATE;

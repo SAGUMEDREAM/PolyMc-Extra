@@ -1,6 +1,6 @@
 package cc.thonly.polymc_extra.config;
 
-import cc.thonly.polymc_extra.util.PolyMcPacks;
+import cc.thonly.polymc_extra.util.PolyMcExtraPacks;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.minecraft.block.Block;
@@ -36,7 +36,7 @@ public class ConfigService {
         Identifier blockId = registryKey.getValue();
         String blockIdStr = blockId.toString();
         boolean inArray = false;
-        for (String expandable : PolyMcPacks.EXPANDABLE) {
+        for (String expandable : PolyMcExtraPacks.EXPANDABLE) {
             if (blockIdStr.contains(expandable)) {
                 inArray = true;
             }
