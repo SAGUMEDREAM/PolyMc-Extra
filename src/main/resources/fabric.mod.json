@@ -1,0 +1,34 @@
+{
+	"schemaVersion": 1,
+	"id": "polymc-extra",
+	"version": "${version}",
+	"name": "PolyMc-Extra",
+	"description": "This is an example description! Tell everyone what your mod is about!",
+	"authors": [
+		"稀神灵梦"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "CC0-1.0",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"cc.thonly.polymc_extra.PolyMcExtra"
+		]
+	},
+	"mixins": [
+		"polymc-extra.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.16.0",
+		"minecraft": ">=1.21.7",
+		"java": ">=21",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"another-mod": "*"
+	},
+	"accessWidener": "polymc-extra.accesswidener"
+}
