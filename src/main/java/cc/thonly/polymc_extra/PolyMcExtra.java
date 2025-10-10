@@ -1,12 +1,10 @@
 package cc.thonly.polymc_extra;
 
-import cc.thonly.polymc_extra.util.LateRunnable;
+import cc.thonly.polymc_extra.command.PolymerExtraCommands;
+import cc.thonly.polymc_extra.util.ExtraModelType;
 import cc.thonly.polymc_extra.util.PolymerBlockHelper;
 import lombok.extern.slf4j.Slf4j;
 import net.fabricmc.api.ModInitializer;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +16,13 @@ public class PolyMcExtra implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		PolymerBlockHelper.registers();
+        try {
+            Class.forName(ExtraModelType.class.getName());
+        } catch (Exception e) {
+            log.error("Can't init ExtraModelType", e);
+        }
+        PolymerBlockHelper.registers();
+		PolymerExtraCommands.bootstrap();
 	}
 
 }

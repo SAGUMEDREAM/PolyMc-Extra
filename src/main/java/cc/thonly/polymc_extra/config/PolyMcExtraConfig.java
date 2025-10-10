@@ -6,6 +6,7 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -17,25 +18,31 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Getter(AccessLevel.PROTECTED)
 @Slf4j
-public class Config {
-    private static Config INSTANCE;
+public class PolyMcExtraConfig {
+    private static PolyMcExtraConfig INSTANCE;
     private static final Path CONFIG_PATH = Path.of("config", "polymc-extra.json");
     private static final Gson GSON = new Gson();
-    private static final Codec<Config> CODEC = RecordCodecBuilder.create(x -> x.group(
+    private static final Codec<PolyMcExtraConfig> CODEC = RecordCodecBuilder.create(x -> x.group(
             Codec.STRING.listOf()
                     .optionalFieldOf("DisabledOpaqueBlocks", new ArrayList<>())
-                    .forGetter(Config::getDisabledOpaqueBlocks)
-    ).apply(x, Config::new));
+                    .forGetter(PolyMcExtraConfig::getDisabledOpaqueBlocks),
+            Codec.unboundedMap(Codec.STRING, Codec.STRING)
+                    .optionalFieldOf("CustomModelTypeMappings", Map.of())
+                    .forGetter(PolyMcExtraConfig::getCustomModelTypeMappings)
+    ).apply(x, PolyMcExtraConfig::new));
 
     private final List<String> disabledOpaqueBlocks;
+    private final Map<String, String> customModelTypeMappings;
     @Getter(AccessLevel.PUBLIC)
     private final ConfigService service;
 
-    public Config(List<String> disabledOpaqueBlocks) {
+    public PolyMcExtraConfig(List<String> disabledOpaqueBlocks, Map<String, String> customModelTypeMappings) {
         this.disabledOpaqueBlocks = new ArrayList<>(disabledOpaqueBlocks);
+        this.customModelTypeMappings = new Object2ObjectOpenHashMap<>(customModelTypeMappings);
         this.service = new ConfigService(this);
     }
 
@@ -44,7 +51,7 @@ public class Config {
             Files.createDirectories(CONFIG_PATH.getParent());
 
             if (!Files.exists(CONFIG_PATH)) {
-                INSTANCE = new Config(List.of());
+                INSTANCE = new PolyMcExtraConfig(List.of(), Map.of());
                 save();
             } else {
                 try (Reader reader = Files.newBufferedReader(CONFIG_PATH)) {
@@ -54,13 +61,13 @@ public class Config {
                             .map(Pair::getFirst)
                             .orElseGet(() -> {
                                 log.error("Failed to parse config, using defaults.");
-                                return new Config(List.of());
+                                return new PolyMcExtraConfig(List.of(), Map.of());
                             });
                 }
             }
         } catch (IOException e) {
             log.error("Failed to load config: ",e);
-            INSTANCE = new Config(List.of());
+            INSTANCE = new PolyMcExtraConfig(List.of(), Map.of());
         }
     }
 
@@ -75,7 +82,7 @@ public class Config {
         }
     }
 
-    public static synchronized Config getConfig() {
+    public static synchronized PolyMcExtraConfig getConfig() {
         if (INSTANCE == null) {
             init();
         }

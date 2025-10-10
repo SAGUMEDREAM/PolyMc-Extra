@@ -1,12 +1,11 @@
 package cc.thonly.polymc_extra.mixin;
 
-import cc.thonly.polymc_extra.config.Config;
+import cc.thonly.polymc_extra.config.PolyMcExtraConfig;
 import cc.thonly.polymc_extra.config.ConfigService;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryKey;
-import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -25,7 +24,7 @@ public abstract class AbstractBlockStateMixin {
         Optional<RegistryKey<Block>> idOpt = Registries.BLOCK.getKey(block);
         if (idOpt.isPresent()) {
             RegistryKey<Block> blockRegistryKey = idOpt.get();
-            Config config = Config.getConfig();
+            PolyMcExtraConfig config = PolyMcExtraConfig.getConfig();
             ConfigService service = config.getService();
             if (service.shouldDisabledOpaque(blockRegistryKey)) {
                 cir.setReturnValue(false);

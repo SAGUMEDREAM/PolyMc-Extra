@@ -6,6 +6,7 @@ import cc.thonly.polymc_extra.block.RealSingleStatePolymerBlock;
 import cc.thonly.polymc_extra.block.StateCopyFactoryBlock;
 import cc.thonly.polymc_extra.block.StatePolymerBlock;
 import cc.thonly.polymc_extra.block.base.*;
+import cc.thonly.polymc_extra.config.PolyMcExtraConfig;
 import eu.pb4.factorytools.api.block.model.SignModel;
 import eu.pb4.factorytools.api.block.model.generic.BlockStateModelManager;
 import eu.pb4.polymer.blocks.api.BlockModelType;
@@ -73,9 +74,7 @@ public class PolymerBlockHelper {
         if (block instanceof AbstractSignBlock signBlock) {
             PolyMcExtraPacks.SIGN_MODELS.add(signBlock);
             PolyMcExtra.LATE_INIT.add(() -> {
-//                if (testJsonExist(block)) {
-                    SignModel.setModel(block, Identifier.of(id.getNamespace(), "block_sign/" + id.getPath()));
-//                }
+                SignModel.setModel(block, Identifier.of(id.getNamespace(), "block_sign/" + id.getPath()));
             });
         }
     }
@@ -84,14 +83,9 @@ public class PolymerBlockHelper {
         Identifier id = Registries.BLOCK.getId(block);
         BlockState defaultState = block.getDefaultState();
 
-        PolymerBlock polymerBlock = null;
-        for (Map.Entry<Class<? extends Block>, BlockRegister<?>> mapEntry : BLOCK_MAP.entrySet()) {
-            Class key = mapEntry.getKey();
-            BlockRegister value = mapEntry.getValue();
-            if (block.getClass().isAssignableFrom(key)) {
-                polymerBlock = value.apply(block);
-                break;
-            }
+        PolymerBlock polymerBlock = findFromBlockMap(block);
+        if (polymerBlock == null) {
+            polymerBlock = PolyMcExtraConfig.getConfig().getService().getCustomBlockMapping(block);
         }
 
         if (polymerBlock == null) {
@@ -131,6 +125,17 @@ public class PolymerBlockHelper {
             };
         }
         return polymerBlock;
+    }
+
+    private static PolymerBlock findFromBlockMap(Block block) {
+        for (Map.Entry<Class<? extends Block>, BlockRegister<?>> mapEntry : BLOCK_MAP.entrySet()) {
+            Class typeClass = mapEntry.getKey();
+            BlockRegister value = mapEntry.getValue();
+            if (block.getClass().isAssignableFrom(typeClass)) {
+                return value.apply(block);
+            }
+        }
+        return null;
     }
 
     @FunctionalInterface

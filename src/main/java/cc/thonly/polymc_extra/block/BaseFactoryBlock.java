@@ -33,10 +33,8 @@ public record BaseFactoryBlock(BlockState clientState, boolean tick,
     @Override
     public BlockState getPolymerBlockState(BlockState state, PacketContext context) {
         Block block = state.getBlock();
-        if (block instanceof Waterloggable waterloggable) {
-            if (state.contains(Properties.WATERLOGGED) && state.get(Properties.WATERLOGGED)) {
-                return WATER_LOGGER.clientState;
-            }
+        if (state.contains(Properties.WATERLOGGED) && state.get(Properties.WATERLOGGED)) {
+            return WATER_LOGGER.clientState;
         }
         return clientState;
     }

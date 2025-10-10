@@ -1,7 +1,7 @@
 package cc.thonly.polymc_extra.util;
 
 import cc.thonly.polymc_extra.PolyMcExtra;
-import cc.thonly.polymc_extra.config.Config;
+import cc.thonly.polymc_extra.config.PolyMcExtraConfig;
 import eu.pb4.factorytools.api.block.model.generic.BlockStateModelManager;
 import eu.pb4.factorytools.api.resourcepack.ModelModifiers;
 import eu.pb4.polymer.resourcepack.api.AssetPaths;
@@ -32,10 +32,10 @@ public class PolyMcExtraPacks {
             "glass_pane", "lattice", "bars", "carpet", "chain", "lantern"
     ));
     public static final Set<String> NAMESPACES = new LinkedHashSet<>();
-    private static Config POLYMC_EXTRA_CONFIG = null;
+    private static PolyMcExtraConfig POLYMC_EXTRA_CONFIG = null;
 
     public static void registers() {
-        var config = Config.getConfig();
+        var config = PolyMcExtraConfig.getConfig();
         POLYMC_EXTRA_CONFIG = config;
         for (Block block : Registries.BLOCK) {
             RegistryKey<Block> key = Registries.BLOCK.getKey(block).orElse(null);
@@ -113,7 +113,9 @@ public class PolyMcExtraPacks {
         for (var namespace : NAMESPACES) {
             var polymerify_namespace = namespace + "_polymerify";
             Map<String, List<StateModelVariant>> map = BlockStateModelManager.UV_LOCKED_MODELS.get(namespace);
-            if (map == null) continue;
+            if (map == null) {
+                continue;
+            }
             for (var entry : map.entrySet()) {
                 var expand = EXPANDABLE.stream().anyMatch(expandable -> entry.getKey().contains(expandable) && entry.getKey().startsWith("block/")) ? expansion : Vec3d.ZERO;
                 for (var v : entry.getValue()) {
@@ -149,7 +151,12 @@ public class PolyMcExtraPacks {
         for (AbstractSignBlock signModel : SIGN_MODELS) {
             Identifier id = Registries.BLOCK.getId(signModel);
             try {
-                ModelModifiers.createSignModel(builder, id.getNamespace(), signModel.getWoodType().name(), atlas);
+                String namespace = id.getNamespace();
+                String name = signModel.getWoodType().name();
+                if (name.contains(namespace + ":")) {
+                    name = name.replaceAll(namespace + ":", "");
+                }
+                ModelModifiers.createSignModel(builder, namespace, name, atlas);
             } catch (Exception err) {
                 log.error("Can't read model namespace and id {}", id, err);
             }

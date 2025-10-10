@@ -1,5 +1,7 @@
 package cc.thonly.polymc_extra.util;
 
+import cc.thonly.polymc_extra.config.ConfigService;
+import cc.thonly.polymc_extra.config.PolyMcExtraConfig;
 import eu.pb4.polymer.core.api.block.PolymerBlockUtils;
 import eu.pb4.polymer.core.api.other.*;
 import eu.pb4.polymer.core.api.utils.PolymerUtils;
@@ -26,7 +28,7 @@ import java.lang.reflect.Field;
 import java.util.*;
 
 @Slf4j
-//@SuppressWarnings("rawtypes")
+@SuppressWarnings("rawtypes")
 public class RegistriesUtil {
     public static final Set<Item> VANILLA_ITEMS = new LinkedHashSet<>();
     public static final Set<Block> VANILLA_BLOCKS = new LinkedHashSet<>();
@@ -43,6 +45,10 @@ public class RegistriesUtil {
     public static final Set<Identifier> VANILLA_CUSTOM_STATS = new LinkedHashSet<>();
 
     public static void parseVanillaRegistryEntries() {
+        PolyMcExtraConfig config = PolyMcExtraConfig.getConfig();
+        ConfigService service = config.getService();
+        service.startCustomBlockMappings();
+
         // Items
         Registries.ITEM.stream()
                 .filter(item -> Registries.ITEM.getId(item).getNamespace().equals("minecraft"))
