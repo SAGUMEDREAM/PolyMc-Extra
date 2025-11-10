@@ -1,5 +1,6 @@
-package cc.thonly.polymc_extra.util;
+package cc.thonly.polymc_extra.model;
 
+import cc.thonly.polymc_extra.block.BaseFactoryBlock;
 import cc.thonly.polymc_extra.block.RealSingleStatePolymerBlock;
 import cc.thonly.polymc_extra.block.StateCopyFactoryBlock;
 import cc.thonly.polymc_extra.block.base.*;
@@ -8,7 +9,7 @@ import eu.pb4.polymer.core.api.block.PolymerBlock;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import net.minecraft.block.Block;
+import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -36,7 +37,11 @@ public class ExtraModelType {
     public static final ExtraModelType TRAPDOOR = of("TRAPDOOR", (block, input) -> TrapdoorPolymerBlock.INSTANCE);
     public static final ExtraModelType DOOR = of("DOOR", (block, input) -> DoorPolymerBlock.INSTANCE);
     public static final ExtraModelType SLAB = of("SLAB", (block, input) -> SlabFactoryBlock.INSTANCE);
-    public static final ExtraModelType BLOCK_DISPLAY_ENTITY = of("BLOCK_DISPLAY_ENTITY", (block, input) -> BarrierPolymerBlock.INSTANCE);
+    public static final ExtraModelType BLOCK_DISPLAY_ENTITY = of("BLOCK_DISPLAY_ENTITY", (block, input) -> BaseFactoryBlock.BARRIER);
+    public static final ExtraModelType BLOCK_DISPLAY_ENTITY_NO_COLLISION = of("BLOCK_DISPLAY_ENTITY_NO_COLLISION", (block, input) -> BaseFactoryBlock.SAPLING);
+    public static final ExtraModelType PLANT = of("PLANT", (block, input) -> BaseFactoryBlock.SAPLING);
+    public static final ExtraModelType WATER_PLANT = of("WATER_PLANT", (block, input) -> BaseFactoryBlock.WATER_PLANT);
+    public static final ExtraModelType CLOSEABLE_BLOCK = of("CLOSEABLE_BLOCK", (block, input) -> BaseFactoryBlock.CLOSEABLE);
     public static final ExtraModelType POLYMER = of("POLYMER", (block, input) -> {
         String cased = input.toUpperCase();
         String[] split = cased.split(":");
@@ -64,11 +69,16 @@ public class ExtraModelType {
     ExtraModelType(@NotNull String name, StateFactory factory) {
         this.name = name.toUpperCase();
         this.factory = factory;
-        TYPES.put(name, this);
     }
 
     public static ExtraModelType of(@NotNull String name, StateFactory factory) {
-        return new ExtraModelType(name, factory);
+        name = name.toUpperCase();
+        if (TYPES.containsKey(name)) {
+            return TYPES.get(name);
+        }
+        ExtraModelType extraModelType = new ExtraModelType(name, factory);
+        TYPES.put(name, extraModelType);
+        return extraModelType;
     }
 
     public static ExtraModelType valueOf(@NotNull String name) {

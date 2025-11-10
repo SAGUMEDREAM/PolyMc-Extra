@@ -15,17 +15,17 @@ import eu.pb4.polymer.resourcepack.extras.api.format.blockstate.StateModelVarian
 import eu.pb4.polymer.virtualentity.api.ElementHolder;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.item.ItemStack;
-import net.minecraft.predicate.block.BlockStatePredicate;
-import net.minecraft.registry.Registries;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.Hand;
-import net.minecraft.util.Pair;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Tuple;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.predicate.BlockStatePredicate;
+import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 import xyz.nucleoid.packettweaker.PacketContext;
 
@@ -48,7 +48,7 @@ public class StatePolymerBlock implements FactoryBlock, PolymerTexturedBlock, BS
     }
 
     public static StatePolymerBlock of(Block block, BlockModelType type, FactoryBlock fallback, Predicate<BlockState> canUseBlock) {
-        var id = Registries.BLOCK.getId(block);
+        var id = BuiltInRegistries.BLOCK.getKey(block);
         var mods = FabricLoader.getInstance().getAllMods();
         var target = "assets/" + id.getNamespace() + "/blockstates/" + id.getPath() + ".json";
         Path path = null;
@@ -67,18 +67,18 @@ public class StatePolymerBlock implements FactoryBlock, PolymerTexturedBlock, BS
         try {
             decoded = BlockStateAsset.CODEC.decode(JsonOps.INSTANCE, JsonParser.parseString(Files.readString(path))).getOrThrow().getFirst();
 
-            var list = new ArrayList<Pair<BlockStatePredicate, List<StateModelVariant>>>();
+            var list = new ArrayList<Tuple<BlockStatePredicate, List<StateModelVariant>>>();
             var cache = new HashMap<List<StateModelVariant>, BlockState>();
 
 
-            BlockStateModelManager.parseVariants(block, decoded.variants().orElseThrow(), (a, b) -> list.add(new Pair<>(a, b)));
+            BlockStateModelManager.parseVariants(block, decoded.variants().orElseThrow(), (a, b) -> list.add(new Tuple<>(a, b)));
             var map = new IdentityHashMap<BlockState, BlockState>();
 
 
-            for (var state : block.getStateManager().getStates()) {
+            for (var state : block.getStateDefinition().getPossibleStates()) {
                 for (var pair : list) {
-                    if (pair.getLeft().test(state) && canUseBlock.test(state)) {
-                        map.put(state, cache.computeIfAbsent(pair.getRight(), c -> PolymerBlockResourceUtils.requestBlock(
+                    if (pair.getA().test(state) && canUseBlock.test(state)) {
+                        map.put(state, cache.computeIfAbsent(pair.getB(), c -> PolymerBlockResourceUtils.requestBlock(
                                 type,
                                 c.stream().map(x -> new PolymerBlockModel(x.model(), x.x(), x.y(), x.uvlock(), x.weigth())).toArray(PolymerBlockModel[]::new))));
                         break;
@@ -99,12 +99,12 @@ public class StatePolymerBlock implements FactoryBlock, PolymerTexturedBlock, BS
     }
 
     @Override
-    public @Nullable ElementHolder createElementHolder(ServerWorld world, BlockPos pos, BlockState initialBlockState) {
+    public @Nullable ElementHolder createElementHolder(ServerLevel world, BlockPos pos, BlockState initialBlockState) {
         return map.containsKey(initialBlockState) ? null : fallback.createElementHolder(world, pos, initialBlockState);
     }
 
     @Override
-    public boolean isIgnoringBlockInteractionPlaySoundExceptedEntity(BlockState state, ServerPlayerEntity player, Hand hand, ItemStack stack, ServerWorld world, BlockHitResult blockHitResult) {
+    public boolean isIgnoringBlockInteractionPlaySoundExceptedEntity(BlockState state, ServerPlayer player, InteractionHand hand, ItemStack stack, ServerLevel world, BlockHitResult blockHitResult) {
         return true;
     }
 }

@@ -3,7 +3,7 @@
 	"id": "polymc-extra",
 	"version": "${version}",
 	"name": "PolyMc-Extra",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"description": "An attempt to make mods compatible with vanilla clients.",
 	"authors": [
 		"稀神灵梦"
 	],
@@ -28,7 +28,8 @@
 		"polymer-core": "*"
 	},
 	"suggests": {
-		"another-mod": "*"
+		"another-mod": "*",
+		"polymc": "*"
 	},
 	"accessWidener": "polymc-extra.accesswidener"
 }

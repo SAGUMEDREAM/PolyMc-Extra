@@ -1,9 +1,9 @@
 package cc.thonly.polymc_extra.mixin;
 
-import net.minecraft.block.AbstractBlock;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import org.spongepowered.asm.mixin.Mixin;
 
-@Mixin(AbstractBlock.class)
+@Mixin(BlockBehaviour.class)
 public class AbstractBlockMixin {
 //    @Inject(method = "<init>", at = @At("TAIL"))
 //    private void onInit(AbstractBlock.Settings settings, CallbackInfo ci) {

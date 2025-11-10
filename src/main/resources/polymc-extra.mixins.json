@@ -5,9 +5,16 @@
   "mixins": [
     "AbstractBlockMixin",
     "AbstractBlockStateMixin",
-    "ExampleMixin",
-    "RegistriesMixin",
-    "RegistryMixin"
+    "BuiltInRegistriesMixin",
+    "ClientboundUpdateTagsPacketMixin",
+    "GuiPolyImplementationMixin",
+    "MappedRegistryMixin",
+    "MinecraftServerMixin",
+    "RegistryMixin",
+    "accessor.MenuTypeAccessor",
+    "accessor.TagPacketSerializerAccessor",
+    "bil.ElementUpdateListenerMixin",
+    "carpet.FakeClientConnectionMixin"
   ],
   "injectors": {
     "defaultRequire": 1
