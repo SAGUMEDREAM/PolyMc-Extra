@@ -2,7 +2,7 @@ package cc.thonly.polymc_extra.mixin;
 
 import cc.thonly.polymc_extra.PolyMcExtra;
 import cc.thonly.polymc_extra.data.PolyMcExtraPacks;
-import cc.thonly.polymc_extra.util.PolymerRegistriesParser;
+import cc.thonly.polymc_extra.util.PolymerBuiltInRegistriesPatcher;
 import net.minecraft.core.registries.BuiltInRegistries;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -13,8 +13,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class BuiltInRegistriesMixin {
 
     @Inject(method = "freeze", at = @At("HEAD"))
-    private static void patchRegistries(CallbackInfo ci) {
-        PolymerRegistriesParser.parseAll(BuiltInRegistries.REGISTRY);
+    private static void patchBuiltInRegistries(CallbackInfo ci) {
+        PolymerBuiltInRegistriesPatcher.patch(BuiltInRegistries.REGISTRY);
         PolyMcExtraPacks.registers();
         PolyMcExtra.getLog().info("Automatic patching completed");
     }

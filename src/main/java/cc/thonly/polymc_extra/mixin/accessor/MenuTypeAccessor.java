@@ -13,7 +13,7 @@ public class MenuTypeAccessor<T extends AbstractContainerMenu> implements IScree
     @Shadow @Final private MenuType.MenuSupplier<T> constructor;
 
     @Override
-    public MenuType.MenuSupplier<T> getFactory() {
+    public MenuType.MenuSupplier<T> polyMcExtra$getFactory() {
         return this.constructor;
     }
 }

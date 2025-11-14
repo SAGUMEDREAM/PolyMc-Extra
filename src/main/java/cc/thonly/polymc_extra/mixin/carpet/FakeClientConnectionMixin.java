@@ -21,10 +21,10 @@ public abstract class FakeClientConnectionMixin extends Connection {
     @SuppressWarnings("DataFlowIssue")
     @Inject(method = "<init>", at = @At("TAIL"))
     public void initPolyMap(PacketFlow p, CallbackInfo ci) {
-        if (PolyMcExtra.HAS_LOADED_POLYMC) {
-            FakeClientConnection connection = (FakeClientConnection) (Object) this;
-            io.github.theepicblock.polymc.api.misc.PolyMapProvider polyMapProvider = (io.github.theepicblock.polymc.api.misc.PolyMapProvider) connection;
-            polyMapProvider.setPolyMap(io.github.theepicblock.polymc.impl.NOPPolyMap.INSTANCE);
-        }
+//        if (PolyMcExtra.HAS_LOADED_POLYMC) {
+//            FakeClientConnection connection = (FakeClientConnection) (Object) this;
+//            io.github.theepicblock.polymc.api.misc.PolyMapProvider polyMapProvider = (io.github.theepicblock.polymc.api.misc.PolyMapProvider) connection;
+//            polyMapProvider.setPolyMap(io.github.theepicblock.polymc.impl.NOPPolyMap.INSTANCE);
+//        }
     }
 }

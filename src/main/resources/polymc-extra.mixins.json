@@ -5,16 +5,22 @@
   "mixins": [
     "AbstractBlockMixin",
     "AbstractBlockStateMixin",
+    "BuiltInRegistriesAccessor",
     "BuiltInRegistriesMixin",
     "ClientboundUpdateTagsPacketMixin",
     "GuiPolyImplementationMixin",
     "MappedRegistryMixin",
     "MinecraftServerMixin",
     "RegistryMixin",
+    "accessor.EntityAccessor",
     "accessor.MenuTypeAccessor",
+    "accessor.ResourcePackCreatorAccessor",
     "accessor.TagPacketSerializerAccessor",
+    "accessor.ThrowableItemProjectileAccessor",
     "bil.ElementUpdateListenerMixin",
-    "carpet.FakeClientConnectionMixin"
+    "carpet.FakeClientConnectionMixin",
+    "enchantment.EnchantmentEntityEffectMixin",
+    "enchantment.EnchantmentLocationBasedEffectMixin"
   ],
   "injectors": {
     "defaultRequire": 1

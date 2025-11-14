@@ -30,7 +30,7 @@ import java.util.function.Consumer;
 
 @SuppressWarnings({"rawtypes","unchecked"})
 @Getter
-public class BasePolymerEntity implements PolymerEntity {
+public abstract class BasePolymerEntity implements PolymerEntity {
     public static final ElementHolderFactory<?> SCALING_ENTITY_MODEL = ScalingEntityModel::new;
     public static final ElementHolderFactory<?> SIMPLE_ENTITY_MODEL = SimpleEntityModel::new;
     private final LivingEntity entity;

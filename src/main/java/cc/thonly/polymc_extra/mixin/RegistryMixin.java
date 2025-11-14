@@ -1,7 +1,6 @@
 package cc.thonly.polymc_extra.mixin;
 
 import eu.pb4.polymer.core.api.item.PolymerItemGroupUtils;
-import eu.pb4.polymer.core.impl.InternalServerRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;

@@ -109,7 +109,7 @@ public class PolymerBlockHelper {
         }
 
         if (block instanceof StandingSignBlock signBlock) {
-            PolyMcExtraPacks.SIGN_MODELS.add(signBlock);
+            PolyMcExtraPacks.SIGN_MODEL_IDS.add(id);
             PolyMcExtra.LATE_INIT.add(() -> {
                 SignModel.setModel(block, ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "block_sign/" + id.getPath()));
             });
