@@ -8,7 +8,7 @@ configuration. It supports automatic patching of most blocks by default.
 I apologize that I haven't had time to compile development documentation. I hope you can read the framework's code to
 explore how it is used.
 
-Many thanks to TheEpicBlock_TEB、Patbox and DrexHD for their code help.
+Some code referenced from to TheEpicBlock_TEB、Patbox and DrexHD for their code help.
 
 ## Config: `/config/polymc-extra.json`
 
