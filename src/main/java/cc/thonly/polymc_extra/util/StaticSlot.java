@@ -1,7 +1,5 @@
 package cc.thonly.polymc_extra.util;
 
-import io.github.theepicblock.polymc.impl.poly.gui.EmptyInventory;
-import io.github.theepicblock.polymc.impl.poly.gui.GuiUtils;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;

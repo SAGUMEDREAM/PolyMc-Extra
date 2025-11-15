@@ -13,7 +13,9 @@ import xyz.nucleoid.packettweaker.PacketContext;
 import java.util.List;
 import java.util.function.Function;
 
-// Source from PolyMc
+/** Source from PolyMc
+ *  <a href="https://github.com/Patbox/PolyMc/blob/dev/1.21.6/src/main/java/io/github/theepicblock/polymc/mixins/enchantment/EnchantmentLocationBasedEffect.java">EnchantmentLocationBasedEffect.java</a>
+ */
 @Mixin(EnchantmentLocationBasedEffect.class)
 public interface EnchantmentLocationBasedEffectMixin {
     @ModifyExpressionValue(method = "<clinit>", at = @At(value = "INVOKE", target = "Lcom/mojang/serialization/Codec;dispatch(Ljava/util/function/Function;Ljava/util/function/Function;)Lcom/mojang/serialization/Codec;"))

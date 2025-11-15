@@ -43,7 +43,8 @@ public class ResourceHelper {
         GLOBAL_ASSETS = ResourceLocatorApi.createGlobalAssetContainer();
         GLOBAL_ASSETS.locateFiles("").forEach(tuple -> {
             ResourceLocation id = tuple.getA();
-            if (!PolyMcExtraPacks.NAMESPACES.contains(id.getNamespace())) return;
+            String namespace = id.getNamespace();
+//            if (!PolyMcExtraPacks.NAMESPACES.contains()) return;
             IoSupplier<InputStream> ioSupplier = tuple.getB();
             try {
                 byte[] data = IOUtils.toByteArray(ioSupplier.get());

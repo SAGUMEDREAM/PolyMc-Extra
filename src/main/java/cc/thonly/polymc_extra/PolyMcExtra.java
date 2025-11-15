@@ -62,6 +62,9 @@ public class PolyMcExtra implements ModInitializer, DedicatedServerModInitialize
         this.registerLifecycleEvents();
         log.info("Loading PolyMc-Extra Commands...");
         PolymerExtraCommands.bootstrap();
+        if (HAS_LOADED_POLYMC) {
+            log.warn("PolyMc was detected in the mod list, installing this mod is not recommended.");
+        }
     }
 
     private void registerLifecycleEvents() {

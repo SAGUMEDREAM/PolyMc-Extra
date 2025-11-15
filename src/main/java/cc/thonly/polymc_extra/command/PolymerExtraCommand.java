@@ -2,8 +2,15 @@ package cc.thonly.polymc_extra.command;
 
 import cc.thonly.polymc_extra.model.ExtraModelType;
 import cc.thonly.polymc_extra.util.PolymerBlockHelper;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.Dynamic;
+import com.mojang.serialization.JsonOps;
 import eu.pb4.polymer.blocks.api.BlockModelType;
 import eu.pb4.polymer.core.api.block.PolymerBlock;
 import eu.pb4.polymer.core.api.block.PolymerBlockUtils;
@@ -13,12 +20,20 @@ import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
+import net.minecraft.resources.RegistryOps;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
@@ -40,8 +55,12 @@ public class PolymerExtraCommand implements PolymerExtraCommands.CommandRegistra
                 Commands.literal("polymc-extra")
                         .executes(this::run)
                         .then(
-                                Commands.literal("get-model-types")
+                                Commands.literal("get-all-model-types")
                                         .executes(this::availableTypeList)
+                        )
+                        .then(
+                                Commands.literal("get-item-info")
+                                        .executes(this::getItemInfo)
                         )
                         .then(
                                 Commands.literal("get-client-state")
@@ -54,6 +73,62 @@ public class PolymerExtraCommand implements PolymerExtraCommands.CommandRegistra
                         )
         );
     }
+
+    private int getItemInfo(CommandContext<CommandSourceStack> context) {
+        CommandSourceStack source = context.getSource();
+        ServerPlayer player = source.getPlayer();
+        if (player == null) {
+            return 1;
+        }
+
+        ItemStack itemStack = player.getItemInHand(InteractionHand.MAIN_HAND);
+        ResourceLocation key = BuiltInRegistries.ITEM.getKey(itemStack.getItem());
+        DataComponentPatch patch = itemStack.getComponentsPatch();
+        Gson gson = new Gson();
+        StringBuilder sb = new StringBuilder();
+        sb.append("§e=== Item Info ===\n");
+        sb.append("ID: §b").append(key).append("\n");
+
+        sb.append("\n§e=== Components ===\n");
+
+        if (patch.isEmpty()) {
+            sb.append("§7(no components)\n");
+        } else {
+            for (var entry : patch.entrySet()) {
+                var type = entry.getKey();
+                var value = entry.getValue();
+
+                sb.append("§6")
+                        .append(type.toString())
+                        .append("§f: ")
+                        .append(gson.toJson(parseJson(player, type.codec(), value)))
+                        .append("\n");
+            }
+        }
+
+        source.sendSuccess(() -> Component.literal(sb.toString()), false);
+        return 0;
+    }
+
+    @SuppressWarnings({"OptionalUsedAsFieldOrParameterType", "unchecked"})
+    private JsonElement parseJson(ServerPlayer player, Codec<?> codec, Optional<?> value) {
+        MinecraftServer server = player.getServer();
+        if (server == null || value.isEmpty() || codec == null) {
+            return new JsonObject();
+        }
+
+        Object realValue = value.get();
+
+        DataResult<JsonElement> result = ((Codec<Object>) codec).encodeStart(JsonOps.INSTANCE, realValue);
+
+        return result.result().orElseGet(() -> {
+            JsonObject error = new JsonObject();
+            error.addProperty("error", "Failed to encode with codec: " + result.error().map(DataResult.Error::message).orElse("?"));
+            return error;
+        });
+    }
+
+
 
     private int run(CommandContext<CommandSourceStack> context) {
         CommandSourceStack source = context.getSource();
