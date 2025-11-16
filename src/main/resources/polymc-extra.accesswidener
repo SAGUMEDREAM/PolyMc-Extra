@@ -2,4 +2,4 @@ accessWidener v2 named
 accessible field net/minecraft/world/level/block/state/BlockBehaviour$Properties id Lnet/minecraft/resources/ResourceKey;
 accessible field net/minecraft/world/entity/Entity level Lnet/minecraft/world/level/Level;
 accessible field net/minecraft/tags/TagNetworkSerialization$NetworkPayload tags Ljava/util/Map;
-mutable field net/minecraft/tags/TagNetworkSerialization$NetworkPayload contents Ljava/util/Map;
+mutable field net/minecraft/tags/TagNetworkSerialization$NetworkPayload tags Ljava/util/Map;
