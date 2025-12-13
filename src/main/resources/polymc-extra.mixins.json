@@ -17,6 +17,7 @@
     "accessor.ResourcePackCreatorAccessor",
     "accessor.TagPacketSerializerAccessor",
     "accessor.ThrowableItemProjectileAccessor",
+    "bil.AnimatedEntityMixin",
     "bil.ElementUpdateListenerMixin",
     "carpet.FakeClientConnectionMixin",
     "enchantment.EnchantmentEntityEffectMixin",

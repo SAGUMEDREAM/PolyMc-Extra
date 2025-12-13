@@ -92,8 +92,8 @@ dependencies {
 
     modImplementation include("nl.theepicblock:resource-locator-api:${project.resource_locator_version}")
 
-    modImplementation files('libs/PolyMc-5.7.0-rev.6a41cb5-dirty+1.21.7.jar')
-    modImplementation files('libs/fabric-carpet-1.21.7-1.4.177+v250630.jar')
+    modCompileOnly files('libs/PolyMc-5.7.0-rev.6a41cb5-dirty+1.21.7.jar')
+    modCompileOnly files('libs/fabric-carpet-1.21.7-1.4.177+v250630.jar')
 
     modImplementation include("eu.pb4:factorytools:[${factorytools_version}]")
     modImplementation include("eu.pb4:sgui:[${sgui_version}]")

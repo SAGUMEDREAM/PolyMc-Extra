@@ -28,6 +28,7 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+@SuppressWarnings("removal")
 @Slf4j
 public class PolyMcExtraPacks {
     public static final List<ResourceLocation> SIGN_MODEL_IDS = new ArrayList<>();

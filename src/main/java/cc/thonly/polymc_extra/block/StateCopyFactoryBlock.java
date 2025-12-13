@@ -36,7 +36,7 @@ public record StateCopyFactoryBlock(Block clientBlock, BiFunction<BlockState, Bl
     public static final StateCopyFactoryBlock PRESSURE_PLATE = new StateCopyFactoryBlock(Blocks.STONE_PRESSURE_PLATE, ShiftyBlockStateModel::longRange);
     public static final StateCopyFactoryBlock PANE = new StateCopyFactoryBlock(Blocks.GLASS_PANE, ShiftyBlockStateModel::longRange);
     public static final StateCopyFactoryBlock CARPET = new StateCopyFactoryBlock(Blocks.WHITE_CARPET, ShiftyBlockStateModel::longRange);
-    public static final StateCopyFactoryBlock CHAIN = new StateCopyFactoryBlock(Blocks.CHAIN, ShiftyBlockStateModel::longRange);
+    public static final StateCopyFactoryBlock CHAIN = new StateCopyFactoryBlock(Blocks.IRON_CHAIN, ShiftyBlockStateModel::longRange);
     public static final StateCopyFactoryBlock LANTERN = new StateCopyFactoryBlock(Blocks.LANTERN, ShiftyBlockStateModel::longRange);
 
     @Override

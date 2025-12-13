@@ -31,6 +31,7 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
@@ -112,8 +113,9 @@ public class PolymerExtraCommand implements PolymerExtraCommands.CommandRegistra
 
     @SuppressWarnings({"OptionalUsedAsFieldOrParameterType", "unchecked"})
     private JsonElement parseJson(ServerPlayer player, Codec<?> codec, Optional<?> value) {
-        MinecraftServer server = player.getServer();
-        if (server == null || value.isEmpty() || codec == null) {
+        ServerLevel level = player.level();
+        MinecraftServer server = level.getServer();
+        if (value.isEmpty() || codec == null) {
             return new JsonObject();
         }
 
@@ -127,7 +129,6 @@ public class PolymerExtraCommand implements PolymerExtraCommands.CommandRegistra
             return error;
         });
     }
-
 
 
     private int run(CommandContext<CommandSourceStack> context) {
