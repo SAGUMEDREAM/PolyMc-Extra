@@ -14,7 +14,7 @@ public class BuiltInRegistriesMixin {
 
     @Inject(method = "freeze", at = @At("HEAD"))
     private static void patchBuiltInRegistries(CallbackInfo ci) {
-        PolymerBuiltInRegistriesPatcher.patch(BuiltInRegistries.REGISTRY);
+        PolymerBuiltInRegistriesPatcher.startPatching(BuiltInRegistries.REGISTRY);
         PolyMcExtraPacks.registers();
         PolyMcExtra.getLog().info("Automatic patching completed");
     }

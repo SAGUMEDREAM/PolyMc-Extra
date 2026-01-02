@@ -38,6 +38,7 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.village.poi.PoiType;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
@@ -75,6 +76,7 @@ public class PolymerBuiltInRegistriesPatcher {
     public static final Set<ConsumeEffect.Type> VANILLA_CONSUME_EFFECT_TYPES = new LinkedHashSet<>();
     public static final Set<StatType> VANILLA_STAT_TYPES = new LinkedHashSet<>();
     public static final Set<ResourceLocation> VANILLA_CUSTOM_STATS = new LinkedHashSet<>();
+    public static final Set<PoiType> VANILLA_POI_TYPES = new LinkedHashSet<>();
     public static final Set<CreativeModeTab> VANILLA_ITEM_GROUPS = new LinkedHashSet<>();
     public static final Set<MenuType> REPLACEABLE_SCREEN_HANDLERS = new LinkedHashSet<>();
 
@@ -176,10 +178,15 @@ public class PolymerBuiltInRegistriesPatcher {
                 .filter(group -> Objects.requireNonNull(BuiltInRegistries.CREATIVE_MODE_TAB.getKey(group)).getNamespace().equals("minecraft"))
                 .forEach(VANILLA_ITEM_GROUPS::add);
 
+        // Poi Types
+        BuiltInRegistries.POINT_OF_INTEREST_TYPE.stream()
+                .filter(group -> Objects.requireNonNull(BuiltInRegistries.POINT_OF_INTEREST_TYPE.getKey(group)).getNamespace().equals("minecraft"))
+                .forEach(VANILLA_POI_TYPES::add);
+
         VanillaLikeEntityUtils.generateMap();
     }
 
-    public static void patch(Registry<? extends Registry<?>> registries) {
+    public static void startPatching(Registry<? extends Registry<?>> registries) {
         generateVanillaRegistryEntries();
         PolyMcExtra.getLog().info("Scanning Mod Resources...");
         PolyMcExtra.getLog().info("Patching Mod Sync Object Entry...");
@@ -410,6 +417,14 @@ public class PolymerBuiltInRegistriesPatcher {
                 log.error("can't get field in PolymerStat.class:", err);
             }
             markNamespace(registry, object);
+        }
+        if (object instanceof PoiType poiType) {
+            boolean isServerOnly = PolymerUtils.isServerOnly(BuiltInRegistries.POINT_OF_INTEREST_TYPE, poiType);
+            boolean isVanillaObject = VANILLA_POI_TYPES.contains(poiType);
+            if (isServerOnly || isVanillaObject) {
+                return;
+            }
+            RegistrySyncUtils.setServerEntry(BuiltInRegistries.POINT_OF_INTEREST_TYPE, poiType);
         }
 //        if (object instanceof ItemGroup itemGroup) {
 //            boolean isServerOnly = PolymerUtils.isServerOnly(Registries.ITEM_GROUP, itemGroup);

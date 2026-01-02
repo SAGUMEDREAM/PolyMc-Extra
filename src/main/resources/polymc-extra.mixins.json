@@ -7,16 +7,20 @@
     "AbstractBlockStateMixin",
     "BuiltInRegistriesAccessor",
     "BuiltInRegistriesMixin",
+    "ByteBufCodecs$26Mixin",
+    "ByteBufCodecsMixin",
     "ClientboundUpdateTagsPacketMixin",
     "GuiPolyImplementationMixin",
     "MappedRegistryMixin",
     "MinecraftServerMixin",
+    "PropertyMapMixin",
     "RegistryMixin",
     "accessor.EntityAccessor",
     "accessor.MenuTypeAccessor",
     "accessor.ResourcePackCreatorAccessor",
-    "accessor.TagPacketSerializerAccessor",
     "accessor.ThrowableItemProjectileAccessor",
+    "balm.FabricBalmMixin",
+    "balm.FabricBalmNetworkingMixin",
     "bil.AnimatedEntityMixin",
     "bil.ElementUpdateListenerMixin",
     "carpet.FakeClientConnectionMixin",
@@ -28,5 +32,8 @@
   },
   "overwrites": {
     "requireAnnotations": true
-	}
+  },
+  "client": [
+    "client.BlockElementMixin"
+  ]
 }
