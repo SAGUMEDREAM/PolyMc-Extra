@@ -8,20 +8,20 @@ import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.function.Function;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
 
 public class EntityModels {
     public static final List<PolyModelInstance<?>> ALL = new ArrayList<>();
     public static final IdentityHashMap<EntityType<?>, PolyModelInstance<?>> BY_TYPE = new IdentityHashMap<>();
 
-    public static <T extends EntityModel<?>> PolyModelInstance<T> create(Function<ModelPart, T> modelCreator, TexturedModelData data, ResourceLocation texture) {
+    public static <T extends EntityModel<?>> PolyModelInstance<T> create(Function<ModelPart, T> modelCreator, TexturedModelData data, Identifier texture) {
         var instance = PolyModelInstance.create(modelCreator, data, texture);
         ALL.add(instance);
         return instance;
     }
 
-    public static <T extends EntityModel<?>> PolyModelInstance<T> withTexture(PolyModelInstance<T> original, ResourceLocation texture) {
+    public static <T extends EntityModel<?>> PolyModelInstance<T> withTexture(PolyModelInstance<T> original, Identifier texture) {
         var instance = original.withTexture(texture);
         ALL.add(instance);
         return instance;

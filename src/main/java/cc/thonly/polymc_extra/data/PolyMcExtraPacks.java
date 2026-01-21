@@ -6,7 +6,6 @@ import cc.thonly.polymc_extra.config.PolyMcExtraConfigService;
 import cc.thonly.polymc_extra.mixin.accessor.ResourcePackCreatorAccessor;
 import eu.pb4.factorytools.api.block.model.generic.BlockStateModelManager;
 import eu.pb4.factorytools.api.resourcepack.ModelModifiers;
-import eu.pb4.polymer.common.api.PolymerCommonUtils;
 import eu.pb4.polymer.resourcepack.api.AssetPaths;
 import eu.pb4.polymer.resourcepack.api.PolymerResourcePackUtils;
 import eu.pb4.polymer.resourcepack.api.ResourcePackBuilder;
@@ -19,7 +18,7 @@ import eu.pb4.polymer.resourcepack.extras.api.format.model.ModelElement;
 import lombok.extern.slf4j.Slf4j;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.Vec3;
 
@@ -31,7 +30,7 @@ import java.util.function.Function;
 @SuppressWarnings("removal")
 @Slf4j
 public class PolyMcExtraPacks {
-    public static final List<ResourceLocation> SIGN_MODEL_IDS = new ArrayList<>();
+    public static final List<Identifier> SIGN_MODEL_IDS = new ArrayList<>();
     public static final Set<String> EXPANDABLE = new LinkedHashSet<>(Set.of(
             "wall", "fence", "slab", "stairs", "pressure_plate", "button",
             "glass_pane", "lattice", "bars", "carpet", "chain", "lantern"
@@ -72,9 +71,9 @@ public class PolyMcExtraPacks {
             ResourcePackExtras extras = ResourcePackExtras.forDefault();
 
             for (String prefix : List.of(namespace, namespace + "_polymerify")) {
-                Function<String, ResourceLocation> factory = id -> ResourceLocation.fromNamespaceAndPath(prefix, id);
+                Function<String, Identifier> factory = id -> Identifier.fromNamespaceAndPath(prefix, id);
                 extras.addBridgedModelsFolder(
-                        paths.stream().map(factory).toArray(ResourceLocation[]::new)
+                        paths.stream().map(factory).toArray(Identifier[]::new)
                 );
             }
 
@@ -171,7 +170,7 @@ public class PolyMcExtraPacks {
                         builder.addData(AssetPaths.model(polymerify_namespace, parentId.getPath() + suffix) + ".json",
                                 finalModelAsset);
                         builder.addData(AssetPaths.model(modelId) + ".json",
-                                new ModelAsset(Optional.of(ResourceLocation.fromNamespaceAndPath(polymerify_namespace, parentId.getPath() + suffix)), asset.elements(),
+                                new ModelAsset(Optional.of(Identifier.fromNamespaceAndPath(polymerify_namespace, parentId.getPath() + suffix)), asset.elements(),
                                         asset.textures(), asset.display(), asset.guiLight(), asset.ambientOcclusion()).toBytes());
                     }
                 }
@@ -182,7 +181,7 @@ public class PolyMcExtraPacks {
                     for (var expandable : EXPANDABLE) {
                         if (string.contains(expandable) && string.startsWith("assets/%s/models/block/".formatted(namespace))) {
                             var asset = ModelAsset.fromJson(new String(bytes, StandardCharsets.UTF_8));
-                            return new ModelAsset(asset.parent().map(x -> ResourceLocation.fromNamespaceAndPath(polymerify_namespace, x.getPath())), asset.elements(), asset.textures(), asset.display(), asset.guiLight(), asset.ambientOcclusion()).toBytes();
+                            return new ModelAsset(asset.parent().map(x -> Identifier.fromNamespaceAndPath(polymerify_namespace, x.getPath())), asset.elements(), asset.textures(), asset.display(), asset.guiLight(), asset.ambientOcclusion()).toBytes();
                         }
                     }
                 }
@@ -190,7 +189,7 @@ public class PolyMcExtraPacks {
             }));
         }
 
-        for (ResourceLocation signModelId : SIGN_MODEL_IDS) {
+        for (Identifier signModelId : SIGN_MODEL_IDS) {
             try {
                 ModelModifiers.createSignModel(builder, signModelId.getNamespace(), signModelId.getPath(), atlas);
             } catch (Exception err) {
@@ -293,7 +292,7 @@ public class PolyMcExtraPacks {
                         builder.addData(
                                 AssetPaths.model(modelId) + ".json",
                                 new ModelAsset(
-                                        Optional.of(ResourceLocation.fromNamespaceAndPath(polymerify_namespace, parentId.getPath() + suffix)),
+                                        Optional.of(Identifier.fromNamespaceAndPath(polymerify_namespace, parentId.getPath() + suffix)),
                                         asset.elements(),
                                         asset.textures(),
                                         asset.display(),
@@ -309,7 +308,7 @@ public class PolyMcExtraPacks {
                 if (!string.contains("_uvlock_") && string.startsWith(modelPath)) {
                     var asset = ModelAsset.fromJson(new String(bytes, StandardCharsets.UTF_8));
                     return new ModelAsset(
-                            asset.parent().map(x -> ResourceLocation.fromNamespaceAndPath(polymerify_namespace, x.getPath())),
+                            asset.parent().map(x -> Identifier.fromNamespaceAndPath(polymerify_namespace, x.getPath())),
                             asset.elements(),
                             asset.textures(),
                             asset.display(),
@@ -354,7 +353,7 @@ public class PolyMcExtraPacks {
 
     public record HolderResource(Block block, String namespace, String modelPath) {
         public static HolderResource of(Block block) {
-            ResourceLocation blockId = BuiltInRegistries.BLOCK.getKey(block);
+            Identifier blockId = BuiltInRegistries.BLOCK.getKey(block);
             String namespace = blockId.getNamespace();
             String path = blockId.getPath();
             String modelPath = "assets/%s/models/block/%s".formatted(namespace, path);

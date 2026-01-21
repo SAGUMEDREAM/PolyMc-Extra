@@ -7,7 +7,6 @@
     "AbstractBlockStateMixin",
     "BuiltInRegistriesAccessor",
     "BuiltInRegistriesMixin",
-    "ByteBufCodecs$26Mixin",
     "ByteBufCodecsMixin",
     "ClientboundUpdateTagsPacketMixin",
     "GuiPolyImplementationMixin",

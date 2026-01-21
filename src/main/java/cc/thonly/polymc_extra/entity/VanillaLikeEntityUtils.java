@@ -8,21 +8,21 @@ import eu.pb4.polymer.core.api.utils.PolymerUtils;
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.animal.AbstractFish;
 import net.minecraft.world.entity.animal.FlyingAnimal;
-import net.minecraft.world.entity.animal.horse.AbstractChestedHorse;
-import net.minecraft.world.entity.animal.horse.AbstractHorse;
-import net.minecraft.world.entity.monster.AbstractSkeleton;
+import net.minecraft.world.entity.animal.equine.AbstractChestedHorse;
+import net.minecraft.world.entity.animal.equine.AbstractHorse;
+import net.minecraft.world.entity.animal.fish.AbstractFish;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.monster.piglin.AbstractPiglin;
+import net.minecraft.world.entity.monster.skeleton.AbstractSkeleton;
 import net.minecraft.world.entity.projectile.ItemSupplier;
 import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.world.entity.vehicle.AbstractMinecart;
+import net.minecraft.world.entity.vehicle.minecart.AbstractMinecart;
 import net.minecraft.world.item.ItemStack;
 import xyz.nucleoid.packettweaker.PacketContext;
 
@@ -42,7 +42,7 @@ public class VanillaLikeEntityUtils {
             return;
         }
         for (EntityType<?> entityType : BuiltInRegistries.ENTITY_TYPE) {
-            ResourceLocation key = BuiltInRegistries.ENTITY_TYPE.getKey(entityType);
+            Identifier key = BuiltInRegistries.ENTITY_TYPE.getKey(entityType);
             if (!key.getNamespace().equalsIgnoreCase("minecraft")) {
                 continue;
             }
@@ -56,6 +56,12 @@ public class VanillaLikeEntityUtils {
                 continue;
             }
             if (entityType == EntityType.BREEZE_WIND_CHARGE) {
+                continue;
+            }
+            if (entityType == EntityType.NAUTILUS) {
+                continue;
+            }
+            if (entityType == EntityType.ZOMBIE_NAUTILUS) {
                 continue;
             }
             Class<?> entityClass = InternalEntityHelpers.getEntityClass(entityType);

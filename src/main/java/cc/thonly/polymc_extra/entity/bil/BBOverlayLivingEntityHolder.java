@@ -2,8 +2,10 @@ package cc.thonly.polymc_extra.entity.bil;
 
 import de.tomalbrc.bil.api.AnimatedEntity;
 import de.tomalbrc.bil.core.element.CollisionElement;
+import de.tomalbrc.bil.core.holder.wrapper.Bone;
 import de.tomalbrc.bil.core.holder.wrapper.DisplayWrapper;
 import de.tomalbrc.bil.core.model.Model;
+import de.tomalbrc.bil.core.model.Node;
 import de.tomalbrc.bil.core.model.Pose;
 import de.tomalbrc.bil.util.Constants;
 import de.tomalbrc.bil.util.Utils;
@@ -29,6 +31,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
+import org.joml.Vector3fc;
 
 import java.util.List;
 import java.util.Optional;
@@ -68,42 +71,78 @@ public class BBOverlayLivingEntityHolder<E extends LivingEntity, A extends Anima
         super.updateElement(serverPlayer, display, pose);
     }
 
+    protected Vector3fc getModelSpaceOrigin(ServerPlayer player, Node node) {
+        Bone<?> bone = this.getBone(node);
+        return bone == null ? null : bone.getLastPose(player).translation();
+    }
+
+    public static @Nullable Node findHeadNode(Node node) {
+        Node res = null;
+
+        for(Node current = node; current != null; current = current.parent()) {
+            if (current.tag() == Node.NodeTag.HEAD) {
+                res = current;
+            }
+        }
+
+        return res;
+    }
+
     @Override
-    protected void applyPose(ServerPlayer serverPlayer, Pose pose, DisplayWrapper<?> display) {
-        Vector3f translation = pose.translation();
-        boolean isHead = display.isHead();
+    protected void applyPose(ServerPlayer serverPlayer, Pose pose, DisplayWrapper<?> displayWrapper) {
+        Vector3f translation = new Vector3f(pose.translation());
+        Quaternionf leftRotation = new Quaternionf(pose.readOnlyLeftRotation());
+
+        Node node = displayWrapper.node();
+        boolean isHead = node.tag() == Node.NodeTag.HEAD;
+        boolean isHeadChild = node.tag() == Node.NodeTag.HEAD_CHILD;
         boolean isDead = this.entity.deathTime > 0;
 
-        if (isHead || isDead) {
-            Quaternionf bodyRotation = new Quaternionf();
-            if (isDead) {
-                bodyRotation.rotateZ(-this.deathAngle * Mth.HALF_PI);
-                translation.rotate(bodyRotation);
-            }
+        if (!isDead && (isHead || isHeadChild)) {
+            Node headNode = isHead ? node : findHeadNode(node);
 
-            if (isHead) {
-                bodyRotation.rotateY(Mth.DEG_TO_RAD * -Mth.rotLerp(0.5f, this.entity.yHeadRotO - this.entity.yBodyRotO, this.entity.yHeadRot - this.entity.yBodyRot));
-                bodyRotation.rotateX(Mth.DEG_TO_RAD * Mth.lerp(0.5f, this.entity.xRotO, this.entity.getXRot()));
-            }
+            if (headNode != null) {
+                Vector3fc pivot = getModelSpaceOrigin(serverPlayer, headNode);
+                if (pivot == null) {
+                    pivot = node.transform().globalTransform().getTranslation(new Vector3f());
+                }
 
-            display.element().setLeftRotation(serverPlayer, bodyRotation.mul(pose.readOnlyLeftRotation()));
-        } else {
-            display.element().setLeftRotation(serverPlayer, pose.readOnlyLeftRotation());
+                float yawDiff = this.entity.yHeadRot - this.entity.yBodyRot;
+                float yawDiffO = this.entity.yHeadRotO - this.entity.yBodyRotO;
+                float netYaw = Mth.rotLerp(0.5f, yawDiffO, yawDiff);
+                float netPitch = Mth.lerp(0.5f, this.entity.xRotO, this.entity.getXRot());
+
+                Quaternionf lookRotation = new Quaternionf()
+                        .rotateY(Mth.DEG_TO_RAD * -netYaw)
+                        .rotateX(Mth.DEG_TO_RAD * netPitch);
+
+                lookRotation.mul(leftRotation, leftRotation);
+
+                translation.sub(pivot).rotate(lookRotation).add(pivot);
+            }
+        }
+
+        if (isDead) {
+            Quaternionf deathRotation = new Quaternionf();
+            deathRotation.rotateZ(-this.deathAngle * Mth.HALF_PI);
+            translation.rotate(deathRotation);
+            deathRotation.mul(leftRotation, leftRotation);
         }
 
         if (this.entityScale != 1F) {
             translation.mul(this.entityScale);
-            display.element().setScale(serverPlayer, pose.scale().mul(this.entityScale));
+            displayWrapper.element().setScale(serverPlayer, pose.scale().mul(this.entityScale));
         } else {
-            display.element().setScale(serverPlayer, pose.readOnlyScale());
+            displayWrapper.element().setScale(serverPlayer, pose.readOnlyScale());
         }
 
-        display.element().setTranslation(serverPlayer, translation.sub(0, this.dimensions.height() - 0.01f, 0));
-        display.element().setRightRotation(serverPlayer, pose.readOnlyRightRotation());
-
-        display.element().startInterpolationIfDirty(serverPlayer);
+        displayWrapper.element().setLeftRotation(serverPlayer, leftRotation);
+        displayWrapper.element().setTranslation(serverPlayer, translation.sub(0, this.dimensions.height() - 0.01f, 0));
+        displayWrapper.element().setRightRotation(serverPlayer, pose.readOnlyRightRotation());
+        displayWrapper.element().startInterpolationIfDirty(serverPlayer);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     protected void startWatchingExtraPackets(ServerGamePacketListenerImpl player, Consumer<Packet<ClientGamePacketListener>> consumer) {
         super.startWatchingExtraPackets(player, consumer);

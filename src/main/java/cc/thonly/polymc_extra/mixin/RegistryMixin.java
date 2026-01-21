@@ -15,9 +15,9 @@ public interface RegistryMixin {
 
     @Inject(method = "register(Lnet/minecraft/core/Registry;Lnet/minecraft/resources/ResourceKey;Ljava/lang/Object;)Ljava/lang/Object;", at = @At("HEAD"), cancellable = true)
     private static <V, T extends V> void register(Registry<V> registry, ResourceKey<V> key, T entry, CallbackInfoReturnable<T> cir) {
-        boolean isVanilla = key.location().getNamespace().equalsIgnoreCase("minecraft");
+        boolean isVanilla = key.identifier().getNamespace().equalsIgnoreCase("minecraft");
         if (registry == BuiltInRegistries.CREATIVE_MODE_TAB && !isVanilla && entry instanceof CreativeModeTab itemGroup) {
-            PolymerItemGroupUtils.registerPolymerItemGroup(key.location(), itemGroup);
+            PolymerItemGroupUtils.registerPolymerItemGroup(key.identifier(), itemGroup);
             cir.setReturnValue(entry);
             cir.cancel();
         }

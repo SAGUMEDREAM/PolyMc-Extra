@@ -13,10 +13,12 @@ public class MenuTypeFactoryWrapperSoFabricApiDoesntDetectIt implements MenuProv
         this.inner = inner;
     }
 
+    @Override
     public Component getDisplayName() {
         return this.inner.getDisplayName();
     }
 
+    @Override
     public AbstractContainerMenu createMenu(int syncId, Inventory inv, Player player) {
         return this.inner.createMenu(syncId, inv, player);
     }

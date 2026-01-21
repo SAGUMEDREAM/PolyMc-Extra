@@ -9,7 +9,7 @@ import eu.pb4.polymer.resourcepack.api.ResourcePackBuilder;
 import eu.pb4.polymer.resourcepack.extras.api.format.blockstate.BlockStateAsset;
 import eu.pb4.polymer.resourcepack.extras.api.format.model.ModelAsset;
 import lombok.extern.slf4j.Slf4j;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.IoSupplier;
 import nl.theepicblock.resourcelocatorapi.ResourceLocatorApi;
 import nl.theepicblock.resourcelocatorapi.api.AssetContainer;
@@ -42,7 +42,7 @@ public class ResourceHelper {
     public static void initGlobalAssets(ResourcePackBuilder builder) {
         GLOBAL_ASSETS = ResourceLocatorApi.createGlobalAssetContainer();
         GLOBAL_ASSETS.locateFiles("").forEach(tuple -> {
-            ResourceLocation id = tuple.getA();
+            Identifier id = tuple.getA();
             String namespace = id.getNamespace();
 //            if (!PolyMcExtraPacks.NAMESPACES.contains()) return;
             IoSupplier<InputStream> ioSupplier = tuple.getB();
@@ -75,16 +75,16 @@ public class ResourceHelper {
         }
     }
 
-    public static <T> T decodeAsset(Codec<T> codec, ResourceLocation id, String type, String extension) throws IOException {
+    public static <T> T decodeAsset(Codec<T> codec, Identifier id, String type, String extension) throws IOException {
         IoSupplier<InputStream> supplier = getAsset(id.getNamespace(), type + "/" + id.getPath() + extension);
         return codec.decode(JsonOps.INSTANCE, JsonParser.parseReader(new JsonReader(new InputStreamReader(supplier.get())))).getOrThrow().getFirst();
     }
 
-    public static BlockStateAsset decodeBlockState(ResourceLocation id) throws IOException {
+    public static BlockStateAsset decodeBlockState(Identifier id) throws IOException {
         return decodeAsset(BlockStateAsset.CODEC, id, "blockstates", ".json");
     }
 
-    public static ModelAsset decodeModel(ResourceLocation id) throws IOException {
+    public static ModelAsset decodeModel(Identifier id) throws IOException {
         return decodeAsset(ModelAsset.CODEC, id, "models", ".json");
     }
 }

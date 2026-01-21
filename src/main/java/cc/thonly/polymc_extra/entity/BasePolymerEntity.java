@@ -18,7 +18,7 @@ import net.minecraft.network.protocol.game.ClientboundEntityEventPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEntityLinkPacket;
 import net.minecraft.network.protocol.game.ClientboundSetPassengersPacket;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -35,14 +35,14 @@ public abstract class BasePolymerEntity implements PolymerEntity {
     public static final ElementHolderFactory<?> SIMPLE_ENTITY_MODEL = SimpleEntityModel::new;
     private final LivingEntity entity;
     private final ElementHolderFactory factory;
-    private final ResourceLocation model;
+    private final Identifier model;
 
     public BasePolymerEntity(LivingEntity entity,
                              ElementHolderFactory factory) {
-        ResourceLocation id = BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType());
+        Identifier id = BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType());
         this.entity = entity;
         this.factory = factory;
-        this.model = ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "model");
+        this.model = Identifier.fromNamespaceAndPath(id.getNamespace(), "model");
         var model = (PolyModelInstance<EntityModel<LivingEntity>>) EntityModels.BY_TYPE.get(entity.getType());
         if (model != null) {
             IdentifiedUniqueEntityAttachment.ofTicking(this.model, this.factory.get(entity, model), entity);

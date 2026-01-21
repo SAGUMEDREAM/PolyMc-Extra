@@ -29,10 +29,11 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.RegistryOps;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.permissions.Permissions;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -69,7 +70,7 @@ public class PolymerExtraCommand implements PolymerExtraCommands.CommandRegistra
                         )
                         .then(
                                 Commands.literal("export-extra-block-models-mappings")
-                                        .requires(source -> source.hasPermission(2))
+                                        .requires(source -> source.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER))
                                         .executes(this::exportMappings)
                         )
         );
@@ -83,7 +84,7 @@ public class PolymerExtraCommand implements PolymerExtraCommands.CommandRegistra
         }
 
         ItemStack itemStack = player.getItemInHand(InteractionHand.MAIN_HAND);
-        ResourceLocation key = BuiltInRegistries.ITEM.getKey(itemStack.getItem());
+        Identifier key = BuiltInRegistries.ITEM.getKey(itemStack.getItem());
         DataComponentPatch patch = itemStack.getComponentsPatch();
         Gson gson = new Gson();
         StringBuilder sb = new StringBuilder();

@@ -18,7 +18,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -34,7 +34,7 @@ public class PolyMcExtra implements ModInitializer, DedicatedServerModInitialize
     public static final String MOD_ID = "polymc-extra";
     public static final boolean HAS_LOADED_POLYMC = FabricLoader.getInstance().isModLoaded("polymc");
     public static final List<Runnable> LATE_INIT = new ArrayList<>();
-    public static final ResourceLocation CHAIR = PolyMcExtra.id("chair");
+    public static final Identifier CHAIR = PolyMcExtra.id("chair");
 
     @Override
     public void onInitialize() {
@@ -126,8 +126,8 @@ public class PolyMcExtra implements ModInitializer, DedicatedServerModInitialize
         return PolyMcExtraConfig.getConfig();
     }
 
-    public static ResourceLocation id(String name) {
-        return ResourceLocation.fromNamespaceAndPath(MOD_ID, name);
+    public static Identifier id(String name) {
+        return Identifier.fromNamespaceAndPath(MOD_ID, name);
     }
 
     public static Logger getLog() {

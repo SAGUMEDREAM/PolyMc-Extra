@@ -21,7 +21,7 @@ public interface EnchantmentEntityEffectMixin {
     @ModifyExpressionValue(method = "<clinit>", at = @At(value = "INVOKE", target = "Lcom/mojang/serialization/Codec;dispatch(Ljava/util/function/Function;Ljava/util/function/Function;)Lcom/mojang/serialization/Codec;"))
     private static Codec<EnchantmentEntityEffect> patchCodec(Codec<EnchantmentEntityEffect> codec) {
         return codec.xmap(Function.identity(), content -> { // Encode
-            if (PolymerCommonUtils.isServerNetworkingThreadWithContext()) {
+            if (PolymerCommonUtils.isServerNetworkingThread()) {
                 var ctx = PacketContext.get();
                 if (ctx.getPacketListener() == null) {
                     return content;

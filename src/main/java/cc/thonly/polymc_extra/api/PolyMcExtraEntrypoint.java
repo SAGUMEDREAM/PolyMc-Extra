@@ -4,7 +4,7 @@ import cc.thonly.polymc_extra.PolyMcExtra;
 import cc.thonly.polymc_extra.config.PolyMcExtraConfigService;
 import cc.thonly.polymc_extra.model.ExtraModelType;
 import cc.thonly.polymc_extra.util.PolymerBlockHelper;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,14 +37,14 @@ public interface PolyMcExtraEntrypoint {
     /**
      * API for retrieving ID
      **/
-    default ResourceLocation id(String name) {
-        return ResourceLocation.fromNamespaceAndPath(this.getNamespace(), name);
+    default Identifier id(String name) {
+        return Identifier.fromNamespaceAndPath(this.getNamespace(), name);
     }
 
     /**
      * API for retrieving polymc-extra id
      **/
-    default ResourceLocation polymcExtraId(String name) {
+    default Identifier polymcExtraId(String name) {
         return PolyMcExtra.id(name);
     }
 }

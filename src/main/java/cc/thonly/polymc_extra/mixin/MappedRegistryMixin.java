@@ -17,7 +17,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.RegistrationInfo;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 @Mixin(MappedRegistry.class)
 public abstract class MappedRegistryMixin<T> implements IMappedRegistry<T> {
@@ -25,9 +25,9 @@ public abstract class MappedRegistryMixin<T> implements IMappedRegistry<T> {
 
     @Shadow @Nullable private Map<T, Holder.Reference<T>> unregisteredIntrusiveHolders;
 
-    @Shadow @Nullable public abstract ResourceLocation getKey(T value);
+    @Shadow @Nullable public abstract Identifier getKey(T value);
 
-    @Shadow @Final private Map<ResourceLocation, Holder.Reference<T>> byLocation;
+    @Shadow @Final private Map<Identifier, Holder.Reference<T>> byLocation;
 
     @Shadow public abstract Holder<T> wrapAsHolder(T value);
 
@@ -57,7 +57,7 @@ public abstract class MappedRegistryMixin<T> implements IMappedRegistry<T> {
     @Override
     @Unique
     public void remove(T value) {
-        ResourceLocation id = this.getKey(value);
+        Identifier id = this.getKey(value);
         Optional<ResourceKey<T>> keyOptional = this.getResourceKey(value);
         if (keyOptional.isEmpty()) {
             return;
@@ -73,7 +73,7 @@ public abstract class MappedRegistryMixin<T> implements IMappedRegistry<T> {
             this.unregisteredIntrusiveHolders.remove(value);
         }
         this.byKey.remove(registryKey);
-        this.byLocation.remove(registryKey.location());
+        this.byLocation.remove(registryKey.identifier());
         this.toId.removeInt(entry);
         this.registrationInfos.remove(registryKey);
 

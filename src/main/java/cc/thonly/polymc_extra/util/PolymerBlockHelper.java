@@ -19,7 +19,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.ButtonBlock;
 import net.minecraft.world.level.block.CarpetBlock;
@@ -91,7 +91,7 @@ public class PolymerBlockHelper {
     }
 
     public static PolymerBlock registerPolymerBlock(Block block) {
-        ResourceLocation id = BuiltInRegistries.BLOCK.getKey(block);
+        Identifier id = BuiltInRegistries.BLOCK.getKey(block);
         PolymerBlock polymerBlock = requestPolymerBlock(block);
         if (polymerBlock == null) {
             UnknownPolymerBlock instance = UnknownPolymerBlock.INSTANCE;
@@ -111,14 +111,14 @@ public class PolymerBlockHelper {
         if (block instanceof StandingSignBlock signBlock) {
             PolyMcExtraPacks.SIGN_MODEL_IDS.add(id);
             PolyMcExtra.LATE_INIT.add(() -> {
-                SignModel.setModel(block, ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "block_sign/" + id.getPath()));
+                SignModel.setModel(block, Identifier.fromNamespaceAndPath(id.getNamespace(), "block_sign/" + id.getPath()));
             });
         }
         return polymerBlock;
     }
 
     public static PolymerBlock requestPolymerBlock(Block block) {
-        ResourceLocation id = BuiltInRegistries.BLOCK.getKey(block);
+        Identifier id = BuiltInRegistries.BLOCK.getKey(block);
         BlockState defaultState = block.defaultBlockState();
 
         PolymerBlock polymerBlock = findFromBlockMap(block);

@@ -9,7 +9,7 @@ import eu.pb4.polymer.virtualentity.api.ElementHolder;
 import eu.pb4.polymer.virtualentity.api.elements.ItemDisplayElement;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
@@ -20,15 +20,15 @@ import xyz.nucleoid.packettweaker.PacketContext;
 
 @Getter
 public class PottedPlantPolymerBlock implements PolymerTexturedBlock, FactoryBlock {
-    private final ResourceLocation blockId;
+    private final Identifier blockId;
     private final ItemStack MODEL;
 
-    public PottedPlantPolymerBlock(ResourceLocation blockId) {
+    public PottedPlantPolymerBlock(Identifier blockId) {
         this(blockId, false);
     }
-    public PottedPlantPolymerBlock(ResourceLocation blockId, boolean useExtraModel) {
+    public PottedPlantPolymerBlock(Identifier blockId, boolean useExtraModel) {
         this.blockId = blockId;
-        MODEL = ItemDisplayElementUtil.getModel(ResourceLocation.fromNamespaceAndPath(blockId.getNamespace(), "block/%s".formatted(useExtraModel ? blockId.getPath() : blockId.getPath().replace("potted_", ""))));
+        MODEL = ItemDisplayElementUtil.getModel(Identifier.fromNamespaceAndPath(blockId.getNamespace(), "block/%s".formatted(useExtraModel ? blockId.getPath() : blockId.getPath().replace("potted_", ""))));
     }
 
     @Override

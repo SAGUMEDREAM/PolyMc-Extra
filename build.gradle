@@ -29,7 +29,20 @@ loom {
 }
 
 repositories {
-    maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
+    maven {
+        url 'https://maven.aliyun.com/nexus/content/groups/public'
+    }
+    maven {
+        url 'https://repository.hanbings.io/proxy'
+    }
+    maven { url = "https://maven.fabricmc.net/" }
+    maven { url = "https://maven.quiltmc.org/repository/release/" }
+    maven { url 'https://maven.kneelawk.com/releases/' }
+    maven { url = "https://maven.tomalbrc.de" }
+    maven { url = "https://maven.nucleoid.xyz" }
+    maven { url = "https://maven.blamejared.com" }
+    maven { url = "https://maven.draylar.dev/releases" }
+    maven { url = "https://maven.aliyun.com/nexus/content/groups/public/" }
     maven { url = 'https://maven.nucleoid.xyz' }
     maven { url = "https://api.modrinth.com/maven/" }
     maven {
@@ -61,11 +74,8 @@ repositories {
     maven { url = "https://maven.mohistmc.com/" }
     maven { url = "https://maven.architectury.dev/" }
     maven { url = "https://cursemaven.com" }
-    maven { url "https://maven.tomalbrc.de" }
-    maven {
-        url "https://maven.theepicblock.nl"
-        content { includeGroup("nl.theepicblock") }
-    }
+    maven { url = "https://maven.tomalbrc.de" }
+    maven { url = "https://maven.theepicblock.nl" }
     flatDir {
         dirs 'libs'
     }
@@ -80,7 +90,7 @@ dependencies {
     mappings loom.officialMojangMappings()
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 
     modImplementation("eu.pb4:polymer-core:[${polymer_version}]")
     modImplementation("eu.pb4:polymer-blocks:[${polymer_version}]")
@@ -98,9 +108,10 @@ dependencies {
 
     modImplementation include("eu.pb4:factorytools:[${factorytools_version}]")
     modImplementation include("eu.pb4:sgui:[${sgui_version}]")
-    modImplementation include("xyz.nucleoid:server-translations-api:2.5.1+1.21.5")
-
+//    modImplementation include("xyz.nucleoid:server-translations-api:${server_translations_api_version}")
     modImplementation include("de.tomalbrc:blockbench-import-library:${project.bil_version}")
+
+    implementation include("gg.moonflower:molang-compiler:${project.molang_compiler_version}")
 
     compileOnly 'org.projectlombok:lombok:1.18.34'
     modCompileOnly 'maven.modrinth:polydex:1.6.0+1.21.6'

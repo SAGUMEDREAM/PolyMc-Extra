@@ -10,8 +10,8 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -30,11 +30,11 @@ import java.util.regex.PatternSyntaxException;
 @Slf4j
 public class PolyMcExtraConfigService {
     // 预设实体覆盖层映射
-    private static final Map<ResourceLocation, SpecialPolymerEntityType> SPECIAL_ENTITY_MAPPINGS = new Object2ObjectLinkedOpenHashMap<>();
+    private static final Map<Identifier, SpecialPolymerEntityType> SPECIAL_ENTITY_MAPPINGS = new Object2ObjectLinkedOpenHashMap<>();
     // 数据层
     private final PolyMcExtraConfig data;
     // 关闭的切割面的方块ID列表 (这个列表没方块ID的情况下, 如果该方块覆盖层展示方式为 屏障 + 展示实体 的话会导致方块无光线, 表现方式为全黑)
-    private final List<ResourceLocation> disabledOpaqueBlockIds = new ArrayList<>();
+    private final List<Identifier> disabledOpaqueBlockIds = new ArrayList<>();
     // 自定义方块类型映射 (方块配置中的预设类型映射)
     private final Map<Block, String> customMappingBlockIds = new Object2ObjectLinkedOpenHashMap<>();
     // 自定义方块映射
@@ -42,10 +42,10 @@ public class PolyMcExtraConfigService {
     // 方块扩展像素映射
     private final Map<Block, Double> customBlockExpansionMappings = new Object2ObjectLinkedOpenHashMap<>();
     // 记录绕过魔改 ScreenHandlerType 的类型ID，用于显示模组UI (注意: 无模组的玩家打开该 UI 将被迫掉线)
-    private final List<ResourceLocation> disabledHackScreenHandlerIds = new ArrayList<>();
+    private final List<Identifier> disabledHackScreenHandlerIds = new ArrayList<>();
 
     // 注册
-    public static SpecialPolymerEntityType registerSpecialReplacedType(ResourceLocation id, SpecialPolymerEntityType factory) {
+    public static SpecialPolymerEntityType registerSpecialReplacedType(Identifier id, SpecialPolymerEntityType factory) {
         SPECIAL_ENTITY_MAPPINGS.put(id, factory);
         return factory;
     }
@@ -57,7 +57,7 @@ public class PolyMcExtraConfigService {
     protected void parseAll() {
         this.disabledOpaqueBlockIds.addAll(
                 this.data.getDisabledOpaqueBlocks().stream()
-                        .map(ResourceLocation::tryParse)
+                        .map(Identifier::tryParse)
                         .filter(Objects::nonNull)
                         .filter(b -> !this.disabledOpaqueBlockIds.contains(b))
                         .toList()
@@ -77,7 +77,7 @@ public class PolyMcExtraConfigService {
         this.disabledHackScreenHandlerIds.addAll(
                 this.data.getDisabledHackScreenHandlers()
                         .stream()
-                        .map(ResourceLocation::tryParse)
+                        .map(Identifier::tryParse)
                         .filter(Objects::nonNull)
                         .filter(st -> !this.disabledHackScreenHandlerIds.contains(st))
                         .toList()
@@ -103,7 +103,7 @@ public class PolyMcExtraConfigService {
             try {
                 Pattern pattern = Pattern.compile(key);
                 for (ResourceKey<Block> blockKey : BuiltInRegistries.BLOCK.registryKeySet()) {
-                    String blockId = blockKey.location().toString();
+                    String blockId = blockKey.identifier().toString();
                     if (pattern.matcher(blockId).matches()) {
                         Block block = BuiltInRegistries.BLOCK.getValue(blockKey);
                         blocks.add(block);
@@ -115,7 +115,7 @@ public class PolyMcExtraConfigService {
             return blocks;
         }
 
-        ResourceLocation id = ResourceLocation.tryParse(key);
+        Identifier id = Identifier.tryParse(key);
         if (id != null && BuiltInRegistries.BLOCK.containsKey(id)) {
             Block block = BuiltInRegistries.BLOCK.getValue(id);
             return Set.of(block);
@@ -124,7 +124,7 @@ public class PolyMcExtraConfigService {
     }
 
     public <T extends AbstractContainerMenu> boolean shouldBypassPolyMcHandler(MenuType<T> type) {
-        ResourceLocation id = BuiltInRegistries.MENU.getKey(type);
+        Identifier id = BuiltInRegistries.MENU.getKey(type);
         return this.disabledHackScreenHandlerIds.contains(id);
     }
 
@@ -143,8 +143,8 @@ public class PolyMcExtraConfigService {
             if (this.innerCustomEntityModelMappings(targetEntityIdStr, holderEntityIdStr)) {
                 continue;
             }
-            ResourceLocation targetEntityId = ResourceLocation.parse(targetEntityIdStr);
-            ResourceLocation holderEntityId = ResourceLocation.parse(holderEntityIdStr);
+            Identifier targetEntityId = Identifier.parse(targetEntityIdStr);
+            Identifier holderEntityId = Identifier.parse(holderEntityIdStr);
 
             if (!(BuiltInRegistries.ENTITY_TYPE.containsKey(targetEntityId) && BuiltInRegistries.ENTITY_TYPE.containsKey(holderEntityId))) {
                 continue;
@@ -164,8 +164,8 @@ public class PolyMcExtraConfigService {
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     private boolean innerCustomEntityModelMappings(String targetEntityIdStr, String holderEntityIdStr) {
-        ResourceLocation targetEntityId = ResourceLocation.parse(targetEntityIdStr);
-        ResourceLocation holderEntityId = ResourceLocation.parse(holderEntityIdStr);
+        Identifier targetEntityId = Identifier.parse(targetEntityIdStr);
+        Identifier holderEntityId = Identifier.parse(holderEntityIdStr);
         if (!(BuiltInRegistries.ENTITY_TYPE.containsKey(targetEntityId))) {
             return false;
         }
@@ -199,7 +199,7 @@ public class PolyMcExtraConfigService {
     }
 
     public boolean shouldDisabledOpaque(@NotNull ResourceKey<Block> registryKey) {
-        ResourceLocation blockId = registryKey.location();
+        Identifier blockId = registryKey.identifier();
         String blockIdStr = blockId.toString();
         boolean inArray = false;
         for (String expandable : PolyMcExtraPacks.EXPANDABLE) {
@@ -213,7 +213,7 @@ public class PolyMcExtraConfigService {
 
     public boolean isMatch(@NotNull ResourceKey<Block> registryKey) {
         List<String> disabledOpaqueBlocks = this.data.getDisabledOpaqueBlocks();
-        ResourceLocation blockId = registryKey.location();
+        Identifier blockId = registryKey.identifier();
         if (this.disabledOpaqueBlockIds.contains(blockId)) {
             return true;
         }

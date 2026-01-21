@@ -36,8 +36,8 @@ public class NaiveStackListingChestPoly implements PolyMcExtraGui {
 
             int hotbar;
             int x;
-            for(hotbar = 0; hotbar < width; ++hotbar) {
-                for(x = 0; x < height; ++x) {
+            for (hotbar = 0; hotbar < width; ++hotbar) {
+                for (x = 0; x < height; ++x) {
                     int index = x + hotbar * width;
                     Slot slot;
                     if (baseSlots.size() > index) {
@@ -51,23 +51,25 @@ public class NaiveStackListingChestPoly implements PolyMcExtraGui {
                 }
             }
 
-            for(hotbar = 0; hotbar < 3; ++hotbar) {
-                for(x = 0; x < 9; ++x) {
+            for (hotbar = 0; hotbar < 3; ++hotbar) {
+                for (x = 0; x < 9; ++x) {
                     this.addSlot(new Slot(playerInventory, x + hotbar * 9 + 9, 8 + x * 18, 84 + hotbar * 18));
                 }
             }
 
-            for(hotbar = 0; hotbar < 9; ++hotbar) {
+            for (hotbar = 0; hotbar < 9; ++hotbar) {
                 this.addSlot(new Slot(playerInventory, hotbar, 8 + hotbar * 18, 142));
             }
 
             this.fakedSlots = fakedSlotsTemp;
         }
 
+        @Override
         public boolean stillValid(Player player) {
             return this.base.stillValid(player);
         }
 
+        @Override
         public ItemStack quickMoveStack(Player player, int index) {
             if (index > this.totalSlots) {
                 index -= this.fakedSlots;

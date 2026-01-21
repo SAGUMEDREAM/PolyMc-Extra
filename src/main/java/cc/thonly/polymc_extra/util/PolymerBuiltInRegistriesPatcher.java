@@ -28,7 +28,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.stats.StatFormatter;
@@ -75,7 +75,7 @@ public class PolymerBuiltInRegistriesPatcher {
     public static final Set<MenuType> VANILLA_SCREEN_HANDLERS = new LinkedHashSet<>();
     public static final Set<ConsumeEffect.Type> VANILLA_CONSUME_EFFECT_TYPES = new LinkedHashSet<>();
     public static final Set<StatType> VANILLA_STAT_TYPES = new LinkedHashSet<>();
-    public static final Set<ResourceLocation> VANILLA_CUSTOM_STATS = new LinkedHashSet<>();
+    public static final Set<Identifier> VANILLA_CUSTOM_STATS = new LinkedHashSet<>();
     public static final Set<PoiType> VANILLA_POI_TYPES = new LinkedHashSet<>();
     public static final Set<CreativeModeTab> VANILLA_ITEM_GROUPS = new LinkedHashSet<>();
     public static final Set<MenuType> REPLACEABLE_SCREEN_HANDLERS = new LinkedHashSet<>();
@@ -112,7 +112,7 @@ public class PolymerBuiltInRegistriesPatcher {
 
         BuiltInRegistries.ATTRIBUTE.stream()
                 .filter(type -> {
-                    ResourceLocation key = BuiltInRegistries.ATTRIBUTE.getKey(type);
+                    Identifier key = BuiltInRegistries.ATTRIBUTE.getKey(type);
                     if (key != null) {
                         return key.getNamespace().equals("minecraft");
                     }
@@ -200,7 +200,7 @@ public class PolymerBuiltInRegistriesPatcher {
             for (Object object : writableRegistry) {
                 if (!(object instanceof MappedRegistry<?> registry)) continue;
                 ResourceKey<? extends Registry<?>> key = registry.key();
-                if (!key.location().getNamespace().equalsIgnoreCase("minecraft")) {
+                if (!key.identifier().getNamespace().equalsIgnoreCase("minecraft")) {
                     //noinspection unchecked
                     RegistrySyncUtils.setServerEntry((WritableRegistry<Object>) writableRegistry, (Object) registry);
                 }
@@ -250,7 +250,7 @@ public class PolymerBuiltInRegistriesPatcher {
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     public static void markNamespace(Registry registry, Object object) {
-        ResourceLocation id = registry.getKey(object);
+        Identifier id = registry.getKey(object);
         if (id != null) {
             PolyMcExtraPacks.NAMESPACES.add(id.getNamespace());
         }
@@ -329,7 +329,7 @@ public class PolymerBuiltInRegistriesPatcher {
             if (isServerOnly || isVanillaObject) {
                 return;
             }
-            ResourceLocation key = BuiltInRegistries.ATTRIBUTE.getKey(attribute);
+            Identifier key = BuiltInRegistries.ATTRIBUTE.getKey(attribute);
             Optional<Holder.Reference<Attribute>> reference = BuiltInRegistries.ATTRIBUTE.get(key);
             reference.ifPresent(PolymerEntityUtils::registerAttribute);
         }
@@ -395,13 +395,13 @@ public class PolymerBuiltInRegistriesPatcher {
             if (isServerOnly || isVanillaObject) {
                 return;
             }
-            ResourceLocation id = BuiltInRegistries.STAT_TYPE.getKey(type);
+            Identifier id = BuiltInRegistries.STAT_TYPE.getKey(type);
             if (id != null) {
                 PolymerStat.registerStat(id, type.getDisplayName(), StatFormatter.DEFAULT);
                 markNamespace(registry, object);
             }
         }
-        if (object instanceof ResourceLocation identifier && registry == BuiltInRegistries.CUSTOM_STAT) {
+        if (object instanceof Identifier identifier && registry == BuiltInRegistries.CUSTOM_STAT) {
             boolean isServerOnly = PolymerUtils.isServerOnly(BuiltInRegistries.CUSTOM_STAT, identifier);
             boolean isVanillaObject = VANILLA_CUSTOM_STATS.contains(identifier);
             if (isServerOnly || isVanillaObject) {
@@ -411,7 +411,7 @@ public class PolymerBuiltInRegistriesPatcher {
             try {
                 Field declaredField = PolymerStat.class.getDeclaredField("NAMES");
                 declaredField.setAccessible(true);
-                Map<ResourceLocation, Component> obj = (Map<ResourceLocation, Component>) declaredField.get(null);
+                Map<Identifier, Component> obj = (Map<Identifier, Component>) declaredField.get(null);
                 obj.put(identifier, Component.translatable("stat." + identifier.toString().replace(':', '.')));
             } catch (Exception err) {
                 log.error("can't get field in PolymerStat.class:", err);
