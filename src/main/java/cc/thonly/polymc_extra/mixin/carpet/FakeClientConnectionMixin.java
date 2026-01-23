@@ -1,7 +1,6 @@
 package cc.thonly.polymc_extra.mixin.carpet;
 
 import carpet.patches.FakeClientConnection;
-import cc.thonly.polymc_extra.PolyMcExtra;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.PacketFlow;
 import org.spongepowered.asm.mixin.Mixin;
