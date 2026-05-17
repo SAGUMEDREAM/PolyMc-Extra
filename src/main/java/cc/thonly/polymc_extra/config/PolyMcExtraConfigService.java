@@ -9,6 +9,7 @@ import eu.pb4.polymer.core.api.entity.PolymerEntityUtils;
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import net.fabricmc.fabric.api.networking.v1.context.PacketContext;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
@@ -19,7 +20,6 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import xyz.nucleoid.packettweaker.PacketContext;
 
 import java.util.*;
 import java.util.function.Function;

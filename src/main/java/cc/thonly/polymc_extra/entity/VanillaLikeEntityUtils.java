@@ -24,7 +24,7 @@ import net.minecraft.world.entity.projectile.ItemSupplier;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.vehicle.minecart.AbstractMinecart;
 import net.minecraft.world.item.ItemStack;
-import xyz.nucleoid.packettweaker.PacketContext;
+import net.fabricmc.fabric.api.networking.v1.context.PacketContext;
 
 import java.util.ArrayList;
 import java.util.List;

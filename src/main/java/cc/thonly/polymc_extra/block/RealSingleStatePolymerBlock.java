@@ -1,5 +1,6 @@
 package cc.thonly.polymc_extra.block;
 
+import cc.thonly.polymc_extra.PolyMcExtra;
 import com.google.gson.JsonParser;
 import com.mojang.serialization.JsonOps;
 import eu.pb4.polymer.blocks.api.BlockModelType;
@@ -15,9 +16,10 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-import xyz.nucleoid.packettweaker.PacketContext;
+import net.fabricmc.fabric.api.networking.v1.context.PacketContext;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -40,7 +42,8 @@ public record RealSingleStatePolymerBlock(BlockState state) implements PolymerTe
             }
         }
         if (path == null) {
-            return null;
+            PolyMcExtra.getLog().error("Can't find block model {}", target);
+            return new RealSingleStatePolymerBlock(Blocks.STONE.defaultBlockState());
         }
 
         BlockStateAsset decoded;
@@ -50,11 +53,16 @@ public record RealSingleStatePolymerBlock(BlockState state) implements PolymerTe
 
             var model = set.size() == 1 ? set.iterator().next() : decoded.variants().orElseThrow().get("");
 
+            if (model == null) {
+                return new RealSingleStatePolymerBlock(Blocks.STONE.defaultBlockState());
+            }
+
             return new RealSingleStatePolymerBlock(PolymerBlockResourceUtils.requestBlock(
                     type,
                     model.stream().map(x -> new PolymerBlockModel(x.model(), x.x(), x.y(), x.uvlock(), x.weigth())).toArray(PolymerBlockModel[]::new)));
         } catch (Throwable e) {
-            return null;
+            PolyMcExtra.getLog().error("Error: ", e);
+            return new RealSingleStatePolymerBlock(Blocks.STONE.defaultBlockState());
         }
     }
 

@@ -8,6 +8,7 @@ import cc.thonly.polymc_extra.data.PolyMcExtraPacks;
 import cc.thonly.polymc_extra.entity.VanillaLikeEntityUtils;
 import cc.thonly.polymc_extra.mixin.BuiltInRegistriesAccessor;
 import cc.thonly.polymc_extra.mixin.accessor.EntityAccessor;
+import cc.thonly.polymc_extra.mixin.accessor.FabricEntityDataRegistryImplAccessor;
 import com.mojang.serialization.MapCodec;
 import eu.pb4.polymer.core.api.block.PolymerBlock;
 import eu.pb4.polymer.core.api.block.PolymerBlockUtils;
@@ -26,6 +27,7 @@ import net.minecraft.core.WritableRegistry;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
@@ -48,7 +50,7 @@ import net.minecraft.world.item.enchantment.effects.EnchantmentEntityEffect;
 import net.minecraft.world.item.enchantment.effects.EnchantmentLocationBasedEffect;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import xyz.nucleoid.packettweaker.PacketContext;
+import net.fabricmc.fabric.api.networking.v1.context.PacketContext;
 
 import java.io.IOException;
 import java.lang.reflect.*;
@@ -195,6 +197,21 @@ public class PolymerBuiltInRegistriesPatcher {
                 tryRegisterOverlay(registry, object);
             }
         }
+        PolyMcExtra.getLog().info("Patching Entity Sync Data...");
+        Registry<EntityDataSerializer<?>> handlerRegistry = FabricEntityDataRegistryImplAccessor.getHandlerRegistry();
+        if (handlerRegistry!=null) {
+            for (var entry : handlerRegistry.entrySet()) {
+                ResourceKey<EntityDataSerializer<?>> key = entry.getKey();
+                EntityDataSerializer<?> serializer = entry.getValue();
+                Identifier id = key.identifier();
+                boolean isServerOnly = PolymerUtils.isServerOnly(handlerRegistry, serializer);
+                boolean isVanillaObject = id.getNamespace().equals("minecraft");
+                if (isServerOnly || isVanillaObject) {
+                    continue;
+                }
+                RegistrySyncUtils.setServerEntry(handlerRegistry, serializer);
+            }
+        }
         PolyMcExtra.getLog().info("Patching Mapped Registries...");
         for (WritableRegistry<?> writableRegistry : BuiltInRegistriesAccessor.getWritableRegistry()) {
             for (Object object : writableRegistry) {
@@ -274,6 +291,10 @@ public class PolymerBuiltInRegistriesPatcher {
                 return;
             }
             PolymerBlock polymerBlock = PolymerBlockHelper.registerPolymerBlock(block);
+            if (polymerBlock == null) {
+                PolyMcExtra.getLog().error("Can't find overlay block for {}", block);
+                return;
+            }
             PolymerBlockHelper.registerHolder(block, polymerBlock);
             markNamespace(registry, object);
         }
@@ -357,7 +378,7 @@ public class PolymerBuiltInRegistriesPatcher {
             if (isServerOnly || isVanillaObject) {
                 return;
             }
-            PolymerStatusEffect.registerOverlay(statusEffect);
+            PolymerMobEffect.registerOverlay(statusEffect);
             markNamespace(registry, object);
         }
         if (object instanceof Potion potion) {
@@ -366,7 +387,7 @@ public class PolymerBuiltInRegistriesPatcher {
             if (isServerOnly || isVanillaObject) {
                 return;
             }
-            RegistrySyncUtils.setServerEntry(BuiltInRegistries.POTION, potion);
+            PolymerPotion.registerOverlay(potion, new SimplePolymerPotion());
             markNamespace(registry, object);
         }
         if (object instanceof MenuType menuType) {

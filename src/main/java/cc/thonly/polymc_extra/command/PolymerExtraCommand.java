@@ -16,6 +16,7 @@ import eu.pb4.polymer.core.api.block.PolymerBlock;
 import eu.pb4.polymer.core.api.block.PolymerBlockUtils;
 import eu.pb4.polymer.core.api.utils.PolymerSyncedObject;
 import lombok.extern.slf4j.Slf4j;
+import net.fabricmc.fabric.impl.networking.context.PacketContextImpl;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -33,6 +34,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.server.permissions.Permissions;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
@@ -40,7 +42,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import xyz.nucleoid.packettweaker.PacketContext;
+import net.fabricmc.fabric.api.networking.v1.context.PacketContext;
 
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
@@ -168,7 +170,7 @@ public class PolymerExtraCommand implements PolymerExtraCommands.CommandRegistra
         PolymerSyncedObject<Block> syncedObject = PolymerSyncedObject.getSyncedObject(BuiltInRegistries.BLOCK, block);
         BlockState clientBlockState = blockState;
         if (syncedObject instanceof PolymerBlock polymerBlock) {
-            clientBlockState = polymerBlock.getPolymerBlockState(blockState, PacketContext.create(player));
+            clientBlockState = polymerBlock.getPolymerBlockState(blockState, player.getPacketContext());
         }
         mutableText.append(Component.literal("ClientBlockState: %s => %s".formatted(blockState, clientBlockState)));
         source.sendSuccess(() -> mutableText, false);

@@ -5,8 +5,8 @@ import cc.thonly.polymc_extra.config.PolyMcExtraConfig;
 import cc.thonly.polymc_extra.config.PolyMcExtraConfigService;
 import cc.thonly.polymc_extra.gui.MenuTypeFactoryWrapperSoFabricApiDoesntDetectIt;
 import cc.thonly.polymc_extra.api.PolyMcExtraGui;
-import eu.pb4.polymer.core.api.other.PolymerScreenHandlerUtils;
-import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
+import eu.pb4.polymer.core.api.other.PolymerMenuUtils;
+import net.fabricmc.fabric.api.menu.v1.ExtendedMenuProvider;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
@@ -38,7 +38,7 @@ public class GuiPolyImplementationMixin {
             if (service.shouldBypassPolyMcHandler(baseType)) {
                 return base;
             }
-            if (PolymerScreenHandlerUtils.isPolymerType(baseType)) {
+            if (PolymerMenuUtils.isPolymerType(baseType)) {
                 return base;
             }
 
@@ -50,9 +50,10 @@ public class GuiPolyImplementationMixin {
     @ModifyVariable(
             method = {"openMenu"},
             at = @At("HEAD"),
-            argsOnly = true
+            argsOnly = true,
+            name = "provider"
     )
     private MenuProvider hackForFabricApi(MenuProvider factory) {
-        return factory instanceof ExtendedScreenHandlerFactory ? new MenuTypeFactoryWrapperSoFabricApiDoesntDetectIt(factory) : factory;
+        return factory instanceof ExtendedMenuProvider<?> ? new MenuTypeFactoryWrapperSoFabricApiDoesntDetectIt(factory) : factory;
     }
 }

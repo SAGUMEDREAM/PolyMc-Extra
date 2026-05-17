@@ -20,16 +20,16 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
-import xyz.nucleoid.packettweaker.PacketContext;
+import net.fabricmc.fabric.api.networking.v1.context.PacketContext;
 
 import java.util.function.BiFunction;
 
 @Getter
 public class BaseFactoryBlock implements FactoryBlock, PolymerTexturedBlock, BSMMParticleBlock {
     public static final BaseFactoryBlock BARRIER = new BaseFactoryBlock(Blocks.BARRIER.defaultBlockState(), false, BlockStateModel::longRange);
-    public static final BaseFactoryBlock SAPLING = new BaseFactoryBlock(PolymerBlockResourceUtils.requestEmpty(BlockModelType.PLANT_BLOCK), false, BlockStateModel::midRange);
-    public static final BaseFactoryBlock WATER_LOGGER = new BaseFactoryBlock(PolymerBlockResourceUtils.requestEmpty(BlockModelType.TRANSPARENT_BLOCK_WATERLOGGED), false, BlockStateModel::midRange);
-    public static final BaseFactoryBlock WATER_PLANT = new BaseFactoryBlock(PolymerBlockResourceUtils.requestEmpty(BlockModelType.KELP_BLOCK), false, BlockStateModel::midRange);
+    public static final BaseFactoryBlock SAPLING = new BaseFactoryBlock(PolymerBlockResourceUtils.requestEmpty(BlockModelType.PLANT), false, BlockStateModel::midRange);
+    public static final BaseFactoryBlock WATER_LOGGER = new BaseFactoryBlock(PolymerBlockResourceUtils.requestEmpty(BlockModelType.LEAVES_WATERLOGGED), false, BlockStateModel::midRange);
+    public static final BaseFactoryBlock WATER_PLANT = new BaseFactoryBlock(PolymerBlockResourceUtils.requestEmpty(BlockModelType.KELP), false, BlockStateModel::midRange);
     public static final BaseFactoryBlock CLOSEABLE = new BaseFactoryBlock(Blocks.BARRIER.defaultBlockState(), false, BlockStateModel::longRange) {
         @Override
         public BlockState getPolymerBlockState(BlockState state, PacketContext context) {

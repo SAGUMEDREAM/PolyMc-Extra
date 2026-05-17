@@ -15,11 +15,14 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
+@SuppressWarnings({"deprecation", "resource"})
 public class PacketHandler {
     public static boolean emulateHandleStatus(Entity entity, byte status) {
         var world = entity.level();
@@ -136,7 +139,33 @@ public class PacketHandler {
         }
     }
 
-    private static void spawnItemParticles(LivingEntity entity, ItemStack stack, int count) {
+    private static void playEquipmentBreakEffects(LivingEntity entity, ItemStackTemplate stack) {
+        if (!(stack.item().is(Items.AIR.builtInRegistryHolder())) && stack.count() > 0) {
+            Holder<SoundEvent> registryEntry = stack.get(DataComponents.BREAK_SOUND);
+            if (registryEntry != null && !entity.isSilent()) {
+                entity.level().playSound(entity, entity.getX(), entity.getY(), entity.getZ(), registryEntry.value(), entity.getSoundSource(), 0.8F, 0.8F + entity.level().getRandom().nextFloat() * 0.4F);
+            }
+
+            spawnItemParticles(entity, stack, 5);
+        }
+    }
+
+    public static void spawnItemParticles(LivingEntity entity, ItemStack stack, int count) {
+        for (int i = 0; i < count; ++i) {
+            Vec3 vec3d = new Vec3(((double) entity.getRandom().nextFloat() - 0.5) * 0.1, Math.random() * 0.1 + 0.1, 0.0);
+            vec3d = vec3d.xRot(-entity.getXRot() * 0.017453292F);
+            vec3d = vec3d.yRot(-entity.getYRot() * 0.017453292F);
+            double d = (double) (-entity.getRandom().nextFloat()) * 0.6 - 0.3;
+            Vec3 vec3d2 = new Vec3(((double) entity.getRandom().nextFloat() - 0.5) * 0.3, d, 0.6);
+            vec3d2 = vec3d2.xRot(-entity.getXRot() * 0.017453292F);
+            vec3d2 = vec3d2.yRot(-entity.getYRot() * 0.017453292F);
+            vec3d2 = vec3d2.add(entity.getX(), entity.getEyeY(), entity.getZ());
+            addParticleClient(entity.level(), new ItemParticleOption(ParticleTypes.ITEM, ItemStackTemplate.fromNonEmptyStack(stack)), vec3d2.x, vec3d2.y, vec3d2.z, vec3d.x, vec3d.y + 0.05, vec3d.z);
+        }
+
+    }
+
+    public static void spawnItemParticles(LivingEntity entity, ItemStackTemplate stack, int count) {
         for (int i = 0; i < count; ++i) {
             Vec3 vec3d = new Vec3(((double) entity.getRandom().nextFloat() - 0.5) * 0.1, Math.random() * 0.1 + 0.1, 0.0);
             vec3d = vec3d.xRot(-entity.getXRot() * 0.017453292F);

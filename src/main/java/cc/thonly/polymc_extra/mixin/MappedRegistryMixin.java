@@ -43,11 +43,11 @@ public abstract class MappedRegistryMixin<T> implements IMappedRegistry<T> {
 
     @Shadow @Final private Map<ResourceKey<T>, RegistrationInfo> registrationInfos;
 
-    @Shadow public abstract int getId(@Nullable T value);
+    @Shadow public abstract int getId(@Nullable T thing);
 
     @Override
     @Unique
-    public void unfreeze() {
+    public void polymc_extra$unfreeze() {
         if (this.frozen) {
             this.unregisteredIntrusiveHolders = new Reference2ObjectOpenHashMap<>();
             this.frozen = false;
@@ -56,7 +56,7 @@ public abstract class MappedRegistryMixin<T> implements IMappedRegistry<T> {
 
     @Override
     @Unique
-    public void remove(T value) {
+    public void polymc_extra$remove(T value) {
         Identifier id = this.getKey(value);
         Optional<ResourceKey<T>> keyOptional = this.getResourceKey(value);
         if (keyOptional.isEmpty()) {

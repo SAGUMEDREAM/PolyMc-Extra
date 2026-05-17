@@ -8,8 +8,8 @@ import de.tomalbrc.bil.core.holder.wrapper.ItemBone;
 import de.tomalbrc.bil.core.model.Model;
 import de.tomalbrc.bil.util.Utils;
 import eu.pb4.polymer.virtualentity.api.VirtualEntityUtils;
+import eu.pb4.polymer.virtualentity.api.data.EntityData;
 import eu.pb4.polymer.virtualentity.api.elements.DisplayElement;
-import eu.pb4.polymer.virtualentity.api.tracker.EntityTrackedData;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
@@ -72,7 +72,7 @@ public abstract class BBOverlayEntityHolder<E extends Entity, A extends Animated
         this.addDirectPassengers(passengers);
 
         if (!passengers.isEmpty()) {
-            consumer.accept(VirtualEntityUtils.createRidePacket(this.entity.getId(), passengers));
+            consumer.accept(VirtualEntityUtils.createClientboundSetPassengersPacket(this.entity.getId(), passengers));
         }
     }
 
@@ -129,11 +129,11 @@ public abstract class BBOverlayEntityHolder<E extends Entity, A extends Animated
 
     @Override
     public void onSyncedDataUpdated(EntityDataAccessor<?> key, Object object) {
-        if (key.equals(EntityTrackedData.FLAGS)) {
+        if (key.equals(EntityData.FLAGS)) {
             byte value = (byte) object;
-            this.updateOnFire(Utils.getSharedFlag(value, EntityTrackedData.ON_FIRE_FLAG_INDEX));
-            this.updateGlowing(Utils.getSharedFlag(value, EntityTrackedData.GLOWING_FLAG_INDEX));
-            this.updateInvisibility(Utils.getSharedFlag(value, EntityTrackedData.INVISIBLE_FLAG_INDEX));
+            this.updateOnFire(Utils.getSharedFlag(value, EntityData.ON_FIRE_FLAG_INDEX));
+            this.updateGlowing(Utils.getSharedFlag(value, EntityData.GLOWING_FLAG_INDEX));
+            this.updateInvisibility(Utils.getSharedFlag(value, EntityData.INVISIBLE_FLAG_INDEX));
         }
     }
 

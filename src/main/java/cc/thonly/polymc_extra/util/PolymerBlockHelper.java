@@ -53,7 +53,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 
-@SuppressWarnings({"unchecked", "rawtypes"})
+@SuppressWarnings({"unchecked", "rawtypes", "deprecation"})
 public class PolymerBlockHelper {
     private static final Map<Class<? extends Block>, BlockRegisterFactory<?>> BLOCK_MAP = new Object2ObjectLinkedOpenHashMap<>();
     private static final Map<Block, PolymerBlock> BLOCK_2_HOLDER = new Object2ObjectLinkedOpenHashMap<>();
@@ -135,7 +135,7 @@ public class PolymerBlockHelper {
                 case FenceGateBlock ignored -> StateCopyFactoryBlock.FENCE_GATE;
                 case FenceBlock ignored -> StateCopyFactoryBlock.FENCE;
                 case WallBlock ignored -> StateCopyFactoryBlock.WALL;
-                case LeavesBlock ignored -> RealSingleStatePolymerBlock.of(block, BlockModelType.TRANSPARENT_BLOCK);
+                case LeavesBlock ignored -> RealSingleStatePolymerBlock.of(block, BlockModelType.LEAVES);
                 case StandingSignBlock ignored -> StateCopyFactoryBlock.SIGN;
                 case WallSignBlock ignored -> StateCopyFactoryBlock.WALL_SIGN;
                 case CeilingHangingSignBlock ignored -> StateCopyFactoryBlock.HANGING_SIGN;

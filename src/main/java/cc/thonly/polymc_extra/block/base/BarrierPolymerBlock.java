@@ -4,7 +4,7 @@ import cc.thonly.polymc_extra.block.StatePolymerBlock;
 import eu.pb4.factorytools.api.block.FactoryBlock;
 import eu.pb4.polymer.virtualentity.api.ElementHolder;
 import org.jetbrains.annotations.Nullable;
-import xyz.nucleoid.packettweaker.PacketContext;
+import net.fabricmc.fabric.api.networking.v1.context.PacketContext;
 
 import java.util.HashMap;
 import java.util.Map;

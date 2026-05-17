@@ -8,7 +8,7 @@ import eu.pb4.polymer.core.api.entity.PolymerEntity;
 import eu.pb4.polymer.virtualentity.api.VirtualEntityUtils;
 import eu.pb4.polymer.virtualentity.api.attachment.IdentifiedUniqueEntityAttachment;
 import eu.pb4.polymer.virtualentity.api.attachment.UniqueIdentifiableAttachment;
-import eu.pb4.polymer.virtualentity.api.tracker.DisplayTrackedData;
+import eu.pb4.polymer.virtualentity.api.data.DisplayEntityData;
 import it.unimi.dsi.fastutil.ints.IntList;
 import lombok.Getter;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -22,7 +22,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import xyz.nucleoid.packettweaker.PacketContext;
+import net.fabricmc.fabric.api.networking.v1.context.PacketContext;
 
 import java.util.List;
 import java.util.Objects;
@@ -56,14 +56,14 @@ public abstract class BasePolymerEntity implements PolymerEntity {
         }
         if (packet instanceof ClientboundSetPassengersPacket packet1 && packet1.getPassengers().length != 0) {
             var model = (SimpleEntityModel<?>) Objects.requireNonNull(UniqueIdentifiableAttachment.get(entity, this.model)).holder();
-            consumer.accept(VirtualEntityUtils.createRidePacket(entity.getId(), IntList.of(model.rideAttachment.getEntityId())));
-            consumer.accept(VirtualEntityUtils.createRidePacket(model.rideAttachment.getEntityId(), packet1.getPassengers()));
+            consumer.accept(VirtualEntityUtils.createClientboundSetPassengersPacket(entity.getId(), IntList.of(model.rideAttachment.getEntityId())));
+            consumer.accept(VirtualEntityUtils.createClientboundSetPassengersPacket(model.rideAttachment.getEntityId(), packet1.getPassengers()));
             return;
         }
 
         if (packet instanceof ClientboundSetEntityLinkPacket packet1) {
             var model = (SimpleEntityModel<?>) Objects.requireNonNull(UniqueIdentifiableAttachment.get(entity, this.model)).holder();
-            consumer.accept(VirtualEntityUtils.createEntityAttachPacket(model.leadAttachment.getEntityId(), packet1.getDestId()));
+            consumer.accept(VirtualEntityUtils.createClientboundSetEntityLinkPacket(model.leadAttachment.getEntityId(), packet1.getDestId()));
             return;
         }
 
@@ -83,7 +83,7 @@ public abstract class BasePolymerEntity implements PolymerEntity {
     public void modifyRawTrackedData(List<SynchedEntityData.DataValue<?>> data, ServerPlayer player, boolean initial) {
         PolymerEntity.super.modifyRawTrackedData(data, player, initial);
         if (initial) {
-            data.add(SynchedEntityData.DataValue.create(DisplayTrackedData.TELEPORTATION_DURATION, 3));
+            data.add(SynchedEntityData.DataValue.create(DisplayEntityData.TELEPORTATION_DURATION, 3));
         }
     }
 

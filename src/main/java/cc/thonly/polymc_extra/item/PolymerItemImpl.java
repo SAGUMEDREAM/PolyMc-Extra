@@ -2,7 +2,7 @@ package cc.thonly.polymc_extra.item;
 
 import eu.pb4.polymer.core.api.item.PolymerItem;
 import eu.pb4.polymer.core.api.utils.PolymerClientDecoded;
-import eu.pb4.polymer.core.api.utils.PolymerKeepModel;
+import net.fabricmc.fabric.api.networking.v1.context.PacketContext;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -14,9 +14,8 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.ShieldItem;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-import xyz.nucleoid.packettweaker.PacketContext;
 
-public class PolymerItemImpl implements PolymerItem, PolymerClientDecoded, PolymerKeepModel {
+public class PolymerItemImpl implements PolymerItem, PolymerClientDecoded {
     private final Item item;
 
     public PolymerItemImpl(Item item) {

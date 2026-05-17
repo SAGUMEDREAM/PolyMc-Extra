@@ -8,7 +8,7 @@ import net.minecraft.world.item.enchantment.effects.AllOf;
 import net.minecraft.world.item.enchantment.effects.EnchantmentEntityEffect;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import xyz.nucleoid.packettweaker.PacketContext;
+import net.fabricmc.fabric.api.networking.v1.context.PacketContext;
 
 import java.util.List;
 import java.util.function.Function;
@@ -23,7 +23,14 @@ public interface EnchantmentEntityEffectMixin {
         return codec.xmap(Function.identity(), content -> { // Encode
             if (PolymerCommonUtils.isServerNetworkingThread()) {
                 var ctx = PacketContext.get();
-                if (ctx.getPacketListener() == null) {
+                if (ctx == null) {
+                    return content;
+                }
+                var connection = ctx.get(PacketContext.CONNECTION);
+                if (connection == null) {
+                    return content;
+                }
+                if (connection.getPacketListener() == null) {
                     return content;
                 }
                 if (PolymerBuiltInRegistriesPatcher.VANILLA_ENCHANTMENT_ENTITY_EFFECT_TYPE.contains(content.codec())) {

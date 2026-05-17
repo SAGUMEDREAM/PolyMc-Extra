@@ -14,6 +14,7 @@ import net.fabricmc.api.DedicatedServerModInitializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.networking.v1.context.PacketContext;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
@@ -23,7 +24,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.slf4j.Logger;
-import xyz.nucleoid.packettweaker.PacketContext;
 
 import java.util.ArrayList;
 import java.util.List;

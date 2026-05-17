@@ -7,11 +7,11 @@ import net.minecraft.world.entity.Entity;
 import java.util.*;
 import java.util.function.BiPredicate;
 
+@SuppressWarnings("unchecked")
 public class EntityAnimationHelper {
     private static final Map<Class<?>, AnimationEntry<?>> MAP = new Object2ObjectOpenHashMap<>();
 
     public static <T extends Entity> AnimationEntry<T> getOrCreate(Class<T> tClass) {
-        //noinspection unchecked
         return (AnimationEntry<T>) MAP.computeIfAbsent(tClass, c -> new AnimationEntry<>());
     }
 

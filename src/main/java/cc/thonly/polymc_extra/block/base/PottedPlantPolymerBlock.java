@@ -2,6 +2,7 @@ package cc.thonly.polymc_extra.block.base;
 
 import com.mojang.math.Axis;
 import eu.pb4.factorytools.api.block.FactoryBlock;
+import eu.pb4.factorytools.api.util.LazyItemStack;
 import eu.pb4.factorytools.api.virtualentity.BlockModel;
 import eu.pb4.factorytools.api.virtualentity.ItemDisplayElementUtil;
 import eu.pb4.polymer.blocks.api.PolymerTexturedBlock;
@@ -16,16 +17,17 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
-import xyz.nucleoid.packettweaker.PacketContext;
+import net.fabricmc.fabric.api.networking.v1.context.PacketContext;
 
 @Getter
 public class PottedPlantPolymerBlock implements PolymerTexturedBlock, FactoryBlock {
     private final Identifier blockId;
-    private final ItemStack MODEL;
+    private final LazyItemStack MODEL;
 
     public PottedPlantPolymerBlock(Identifier blockId) {
         this(blockId, false);
     }
+
     public PottedPlantPolymerBlock(Identifier blockId, boolean useExtraModel) {
         this.blockId = blockId;
         MODEL = ItemDisplayElementUtil.getModel(Identifier.fromNamespaceAndPath(blockId.getNamespace(), "block/%s".formatted(useExtraModel ? blockId.getPath() : blockId.getPath().replace("potted_", ""))));

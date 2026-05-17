@@ -1,6 +1,6 @@
 package cc.thonly.polymc_extra.mixin;
 
-import eu.pb4.polymer.core.api.item.PolymerItemGroupUtils;
+import eu.pb4.polymer.core.api.item.PolymerCreativeModeTabUtils;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
@@ -17,7 +17,7 @@ public interface RegistryMixin {
     private static <V, T extends V> void register(Registry<V> registry, ResourceKey<V> key, T entry, CallbackInfoReturnable<T> cir) {
         boolean isVanilla = key.identifier().getNamespace().equalsIgnoreCase("minecraft");
         if (registry == BuiltInRegistries.CREATIVE_MODE_TAB && !isVanilla && entry instanceof CreativeModeTab itemGroup) {
-            PolymerItemGroupUtils.registerPolymerItemGroup(key.identifier(), itemGroup);
+            PolymerCreativeModeTabUtils.registerPolymerCreativeModeTab(key.identifier(), itemGroup);
             cir.setReturnValue(entry);
             cir.cancel();
         }

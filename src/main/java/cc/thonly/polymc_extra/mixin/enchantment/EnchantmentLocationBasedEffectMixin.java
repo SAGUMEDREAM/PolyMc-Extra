@@ -4,17 +4,19 @@ import cc.thonly.polymc_extra.util.PolymerBuiltInRegistriesPatcher;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.mojang.serialization.Codec;
 import eu.pb4.polymer.common.api.PolymerCommonUtils;
+import net.minecraft.network.Connection;
 import net.minecraft.world.item.enchantment.effects.AllOf;
 import net.minecraft.world.item.enchantment.effects.EnchantmentLocationBasedEffect;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import xyz.nucleoid.packettweaker.PacketContext;
+import net.fabricmc.fabric.api.networking.v1.context.PacketContext;
 
 import java.util.List;
 import java.util.function.Function;
 
-/** Source from PolyMc
- *  <a href="https://github.com/Patbox/PolyMc/blob/dev/1.21.6/src/main/java/io/github/theepicblock/polymc/mixins/enchantment/EnchantmentLocationBasedEffect.java">EnchantmentLocationBasedEffect.java</a>
+/**
+ * Source from PolyMc
+ * <a href="https://github.com/Patbox/PolyMc/blob/dev/1.21.6/src/main/java/io/github/theepicblock/polymc/mixins/enchantment/EnchantmentLocationBasedEffect.java">EnchantmentLocationBasedEffect.java</a>
  */
 @Mixin(EnchantmentLocationBasedEffect.class)
 public interface EnchantmentLocationBasedEffectMixin {
@@ -23,7 +25,14 @@ public interface EnchantmentLocationBasedEffectMixin {
         return codec.xmap(Function.identity(), content -> { // Encode
             if (PolymerCommonUtils.isServerNetworkingThread()) {
                 var ctx = PacketContext.get();
-                if (ctx.getPacketListener() == null) {
+                if (ctx == null) {
+                    return content;
+                }
+                var connection = ctx.get(PacketContext.CONNECTION);
+                if (connection == null) {
+                    return content;
+                }
+                if (connection.getPacketListener() == null) {
                     return content;
                 }
 

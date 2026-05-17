@@ -9,8 +9,8 @@ import de.tomalbrc.bil.core.model.Node;
 import de.tomalbrc.bil.core.model.Pose;
 import de.tomalbrc.bil.util.Constants;
 import de.tomalbrc.bil.util.Utils;
+import eu.pb4.polymer.virtualentity.api.data.EntityData;
 import eu.pb4.polymer.virtualentity.api.elements.InteractionElement;
-import eu.pb4.polymer.virtualentity.api.tracker.EntityTrackedData;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.network.chat.Component;
@@ -227,17 +227,15 @@ public class BBOverlayLivingEntityHolder<E extends LivingEntity, A extends Anima
     public void onSyncedDataUpdated(EntityDataAccessor<?> key, Object object) {
         super.onSyncedDataUpdated(key, object);
         if (key.equals(Constants.DATA_EFFECT_PARTICLES)) {
-            // noinspection unchecked
-            this.collisionElement.getDataTracker().set(Constants.DATA_EFFECT_PARTICLES, (List<ParticleOptions>) object);
+            this.collisionElement.getSyncedData().set(Constants.DATA_EFFECT_PARTICLES, (List<ParticleOptions>) object);
         }
 
-        if (key.equals(EntityTrackedData.NAME_VISIBLE)) {
+        if (key.equals(EntityData.NAME_VISIBLE)) {
             this.hitboxInteraction.setCustomNameVisible((boolean) object);
         }
 
-        if (key.equals(EntityTrackedData.CUSTOM_NAME)) {
-            // noinspection unchecked
-            this.hitboxInteraction.getDataTracker().set(EntityTrackedData.CUSTOM_NAME, (Optional<Component>) object);
+        if (key.equals(EntityData.CUSTOM_NAME)) {
+            this.hitboxInteraction.getSyncedData().set(EntityData.CUSTOM_NAME, (Optional<Component>) object);
         }
     }
 

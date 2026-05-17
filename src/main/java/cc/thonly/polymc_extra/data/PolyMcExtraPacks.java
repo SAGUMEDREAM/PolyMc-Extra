@@ -6,10 +6,7 @@ import cc.thonly.polymc_extra.config.PolyMcExtraConfigService;
 import cc.thonly.polymc_extra.mixin.accessor.ResourcePackCreatorAccessor;
 import eu.pb4.factorytools.api.block.model.generic.BlockStateModelManager;
 import eu.pb4.factorytools.api.resourcepack.ModelModifiers;
-import eu.pb4.polymer.resourcepack.api.AssetPaths;
-import eu.pb4.polymer.resourcepack.api.PolymerResourcePackUtils;
-import eu.pb4.polymer.resourcepack.api.ResourcePackBuilder;
-import eu.pb4.polymer.resourcepack.api.ResourcePackCreator;
+import eu.pb4.polymer.resourcepack.api.*;
 import eu.pb4.polymer.resourcepack.extras.api.ResourcePackExtras;
 import eu.pb4.polymer.resourcepack.extras.api.format.atlas.AtlasAsset;
 import eu.pb4.polymer.resourcepack.extras.api.format.blockstate.StateModelVariant;
@@ -27,11 +24,10 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-@SuppressWarnings("removal")
 @Slf4j
 public class PolyMcExtraPacks {
     public static final List<Identifier> SIGN_MODEL_IDS = new ArrayList<>();
-    public static final Set<String> EXPANDABLE = new LinkedHashSet<>(Set.of(
+    public static final Set<String> EXPANDABLE = new LinkedHashSet<>(List.of(
             "wall", "fence", "slab", "stairs", "pressure_plate", "button",
             "glass_pane", "lattice", "bars", "carpet", "chain", "lantern"
     ));
@@ -101,7 +97,8 @@ public class PolyMcExtraPacks {
         long start = System.nanoTime();
         var atlas = AtlasAsset.builder();
 
-        builder.forEachFile(((string, bytes) -> {
+        builder.forEachResource(((string, packResource) -> {
+            var bytes = packResource.readAllBytes();
             for (var expandable : EXPANDABLE) {
                 for (var namespace : NAMESPACES) {
                     var polymerify_namespace = namespace + "_polymerify";
@@ -116,10 +113,13 @@ public class PolyMcExtraPacks {
                             }
                             var parentAsset = ModelAsset.fromJson(new String(bty, StandardCharsets.UTF_8));
 
-                            builder.addData(AssetPaths.model(polymerify_namespace, parentId.getPath()) + ".json", new ModelAsset(parentAsset.parent(), parentAsset.elements().map(x -> x.stream()
-                                    .map(element -> new ModelElement(element.from().subtract(expansion), element.to().add(expansion),
-                                            element.faces(), element.rotation(), element.shade(), element.lightEmission())
-                                    ).toList()), parentAsset.textures(), parentAsset.display(), parentAsset.guiLight(), parentAsset.ambientOcclusion()).toBytes());
+                            builder.addData(AssetPaths.model(polymerify_namespace, parentId.getPath()) + ".json", new ModelAsset(
+                                    parentAsset.parent(),
+                                    parentAsset.elements().map(x -> x.stream()
+                                            .map(element -> new ModelElement(element.from().subtract(expansion), element.to().add(expansion),
+                                                    element.faces(), element.rotation(), element.shade(), element.lightEmission())
+                                            ).toList()), parentAsset.textures(), parentAsset.display(), parentAsset.guiLight(), parentAsset.ambientOcclusion()
+                            ).toBytes());
                         }
 
                         if (asset.elements().isPresent()) {
@@ -176,16 +176,20 @@ public class PolyMcExtraPacks {
                 }
             }
 
-            builder.addWriteConverter(((string, bytes) -> {
+            builder.addResourceConverter(((string, packResource) -> {
                 if (!string.contains("_uvlock_")) {
                     for (var expandable : EXPANDABLE) {
                         if (string.contains(expandable) && string.startsWith("assets/%s/models/block/".formatted(namespace))) {
-                            var asset = ModelAsset.fromJson(new String(bytes, StandardCharsets.UTF_8));
-                            return new ModelAsset(asset.parent().map(x -> Identifier.fromNamespaceAndPath(polymerify_namespace, x.getPath())), asset.elements(), asset.textures(), asset.display(), asset.guiLight(), asset.ambientOcclusion()).toBytes();
+                            String modelJsonStr = packResource.asString();
+                            if (modelJsonStr == null) {
+                                continue;
+                            }
+                            var asset = ModelAsset.fromJson(modelJsonStr);
+                            return PackResource.of(new ModelAsset(asset.parent().map(x -> Identifier.fromNamespaceAndPath(polymerify_namespace, x.getPath())), asset.elements(), asset.textures(), asset.display(), asset.guiLight(), asset.ambientOcclusion()).toBytes());
                         }
                     }
                 }
-                return bytes;
+                return packResource;
             }));
         }
 
@@ -208,8 +212,9 @@ public class PolyMcExtraPacks {
         PolyMcExtra.getLog().info("Starting to build custom-holder resource pack...");
         PolyMcExtraConfigService service = PolyMcExtra.getConfig().getService();
         long start = System.nanoTime();
-        builder.forEachFile(((path, bytes) -> {
+        builder.forEachResource(((path, packResource) -> {
             for (HolderResource holderResource : HOLDER_RESOURCES_SET) {
+                byte[] bytes = packResource.readAllBytes();
                 var namespace = holderResource.namespace();
                 var modelPath = holderResource.modelPath();
                 var polymerify_namespace = namespace + "_polymerify";
@@ -220,7 +225,7 @@ public class PolyMcExtraPacks {
                     if (asset.parent().isPresent()) {
                         var parentId = asset.parent().get();
                         byte[] dataOrSource = builder.getDataOrSource(AssetPaths.model(parentId) + ".json");
-                        if (dataOrSource==null) continue;
+                        if (dataOrSource == null) continue;
                         var parentAsset = ModelAsset.fromJson(new String(dataOrSource, StandardCharsets.UTF_8));
 
                         builder.addData(AssetPaths.model(polymerify_namespace, parentId.getPath()) + ".json", new ModelAsset(parentAsset.parent(), parentAsset.elements().map(x -> x.stream()
@@ -304,19 +309,23 @@ public class PolyMcExtraPacks {
                 }
             }
 
-            builder.addWriteConverter(((string, bytes) -> {
+            builder.addResourceConverter(((string, packResource) -> {
                 if (!string.contains("_uvlock_") && string.startsWith(modelPath)) {
-                    var asset = ModelAsset.fromJson(new String(bytes, StandardCharsets.UTF_8));
-                    return new ModelAsset(
+                    String jsonString = packResource.asString();
+                    if (jsonString == null) {
+                        return packResource;
+                    }
+                    var asset = ModelAsset.fromJson(jsonString);
+                    return PackResource.of(new ModelAsset(
                             asset.parent().map(x -> Identifier.fromNamespaceAndPath(polymerify_namespace, x.getPath())),
                             asset.elements(),
                             asset.textures(),
                             asset.display(),
                             asset.guiLight(),
                             asset.ambientOcclusion()
-                    ).toBytes();
+                    ).toBytes());
                 }
-                return bytes;
+                return packResource;
             }));
         }
 
