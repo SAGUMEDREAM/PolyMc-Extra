@@ -102,13 +102,13 @@ dependencies {
     implementation("eu.pb4:polymer-autohost:${polymer_version}")
     implementation("eu.pb4:polymer-networking:[${polymer_version}]")
 
-    implementation files("/libs/resource-locator-api-0.6.3+26.1.2.jar")
 
     compileOnly("net.blay09.mods:balm-common:26.1.2.6")
     compileOnly("net.blay09.mods:balm-fabric:26.1.2.6")
     compileOnly files('libs/PolyMc-5.7.0-rev.6a41cb5-dirty+1.21.7.jar')
     compileOnly files('libs/fabric-carpet-1.21.7-1.4.177+v250630.jar')
 
+    implementation include("nl.theepicblock:resource-locator-api:0.7.1+26.1")
     implementation include("me.lucko:fabric-permissions-api:${fabric_permissions_api_version}")
     implementation include("eu.pb4:factorytools:[${factorytools_version}]")
     implementation include("eu.pb4:sgui:[${sgui_version}]")
@@ -181,7 +181,7 @@ tasks.named("jar") {
         def jarFile = archiveFile.get().asFile
 
         includeDependencyJar(jarFile, [
-                "${rootProject.projectDir}/libs/resource-locator-api-0.6.3+26.1.2.jar"
+//                "${rootProject.projectDir}/libs/resource-locator-api-0.6.3+26.1.2.jar"
         ])
     }
 }
