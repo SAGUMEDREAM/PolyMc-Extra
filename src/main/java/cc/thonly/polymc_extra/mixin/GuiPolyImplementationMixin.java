@@ -48,12 +48,14 @@ public class GuiPolyImplementationMixin {
     }
 
     @ModifyVariable(
-            method = {"openMenu"},
+            method = "openMenu",
             at = @At("HEAD"),
             argsOnly = true,
-            name = "provider"
+            ordinal = 0
     )
-    private MenuProvider hackForFabricApi(MenuProvider factory) {
-        return factory instanceof ExtendedMenuProvider<?> ? new MenuTypeFactoryWrapperSoFabricApiDoesntDetectIt(factory) : factory;
+    private MenuProvider hackForFabricApi(MenuProvider provider) {
+        return provider instanceof ExtendedMenuProvider<?>
+                ? new MenuTypeFactoryWrapperSoFabricApiDoesntDetectIt(provider)
+                : provider;
     }
 }

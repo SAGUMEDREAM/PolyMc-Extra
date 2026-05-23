@@ -109,6 +109,7 @@ dependencies {
     compileOnly files('libs/PolyMc-5.7.0-rev.6a41cb5-dirty+1.21.7.jar')
     compileOnly files('libs/fabric-carpet-1.21.7-1.4.177+v250630.jar')
 
+    implementation include("me.lucko:fabric-permissions-api:${fabric_permissions_api_version}")
     implementation include("eu.pb4:factorytools:[${factorytools_version}]")
     implementation include("eu.pb4:sgui:[${sgui_version}]")
 //    implementation include("xyz.nucleoid:server-translations-api:${server_translations_api_version}")
@@ -117,7 +118,7 @@ dependencies {
     implementation include("gg.moonflower:molang-compiler:${project.molang_compiler_version}")
 
     compileOnly 'org.projectlombok:lombok:1.18.40'
-    compileOnly 'maven.modrinth:polydex:1.6.0+1.21.6'
+    compileOnly 'maven.modrinth:polydex:1.9.3+26.1.2'
     annotationProcessor 'org.projectlombok:lombok:1.18.40'
 }
 
